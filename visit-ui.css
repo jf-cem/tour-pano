@@ -50,3 +50,6 @@ body[data-walk-state=preparing] .walk-status,body[data-walk-state=walking] .walk
 #visit-panel .tools .row>div{flex:1 1 135px}
 
 body[data-walk-state=ready] #walk-state-title{display:none}
+#camera-options{margin:12px 0 0;padding:10px 12px 12px;border:1px solid #c5d7cb;border-radius:10px;min-width:0}
+#camera-options legend{font-size:14px;font-weight:650;color:#355545;padding:0 4px}
+#camera-options:disabled{opacity:.55}

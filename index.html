@@ -32,7 +32,7 @@ body.map-open #visit-panel .panel{max-height:calc(100dvh - 290px)}body.map-expan
 @media(max-width:350px){#visit-panel>summary{padding-right:134px}#motion-toggle{width:93px;font-size:10px}.route-heading span{font-size:10px}}
 @supports not (backdrop-filter:blur(1px)){#visit-panel{background:#e3eee8ee}}
 #motion-toggle{position:fixed;z-index:6;top:max(18px,calc(env(safe-area-inset-top) + 6px));left:calc(12px + min(400px,100vw - 24px) - 142px);right:auto}@media(max-width:350px){#motion-toggle{left:calc(12px + min(400px,100vw - 24px) - 130px)}}@media(min-width:601px) and (max-width:740px){#motion-toggle{left:200px}}
-/* v7.6: native-size route drawing and glass on a separate background layer. */
+/* v7.7: native-size route drawing and glass on a separate background layer. */
 #route-strip{left:var(--route-side,60px);right:var(--route-side,60px);bottom:max(8px,calc(env(safe-area-inset-bottom) + 8px));padding:3px 52px 1px 10px;isolation:isolate;background:none;backdrop-filter:none;-webkit-backdrop-filter:none;box-shadow:0 3px 14px #0003,inset 0 1px 0 #ffffff50}
 #route-strip:before{content:'';position:absolute;inset:0;z-index:-1;border-radius:inherit;background:linear-gradient(135deg,#204b43c9,#3b6056ae);backdrop-filter:blur(14px) saturate(140%);-webkit-backdrop-filter:blur(14px) saturate(140%)}
 #route-line{height:18px;overflow:visible;filter:none;transform:none}#route-labels{height:11px;line-height:11px;font-size:9px}.route-heading{height:12px}.route-heading strong,.route-heading span{font-size:10px}.route-heading span{overflow:hidden;text-overflow:ellipsis}.route-heading button{top:7px}
@@ -40,7 +40,7 @@ body.map-open #visit-panel .panel{max-height:calc(100dvh - 290px)}body.map-expan
 #mini-map-panel.expanded{width:min(340px,calc(100vw - 24px))}#mini-map-panel.expanded #mini-map{height:min(230px,40dvh)}
 #map-resize-tools{padding:4px 8px 8px;background:#f2f6f3}#map-resize-tools label{display:flex;justify-content:space-between;margin:0;font-size:11px}#map-width{display:block;min-height:32px;height:32px;padding:0;margin:0;accent-color:#17674e}#map-resize[aria-expanded=true]{background:#d5eadf}
 @supports not (backdrop-filter:blur(1px)){#route-strip:before{background:#234d43ee}}
-</style><link rel="stylesheet" href="visit-ui.css?v=7.6"></head><body>
+</style><link rel="stylesheet" href="visit-ui.css?v=7.7"></head><body>
 <p id="motion-message" role="status" hidden></p><iframe id="tour" src="tour.html" title="Visita virtual" allow="geolocation; fullscreen; accelerometer; gyroscope" allowfullscreen></iframe>
 <button id="motion-toggle" disabled aria-pressed="false" aria-label="Olhar à volta">Olhar à volta</button><details id="visit-panel" open><summary><span><strong>Visita Virtual</strong><span id="current-label">Caminhar e explorar</span></span></summary><div class="panel">
 <section id="walk-setup" aria-labelledby="setup-heading">
@@ -70,13 +70,21 @@ body.map-open #visit-panel .panel{max-height:calc(100dvh - 290px)}body.map-expan
 <p class="hint" id="relative-help">Sem o modo em linha reta, reproduz as curvas do percurso depois de alinhar a direção.</p>
 </section>
 <section class="advanced-section" aria-labelledby="simulation-heading">
-<h3 id="simulation-heading">Demonstração automática</h3>
+<h3 id="simulation-heading">Demonstração cinematográfica</h3>
 <p class="hint">Sem GPS. Parte do panorama escolhido e permite gravar com o mapa fechado.</p>
 <div class="row"><div><label for="simulation-speed">Velocidade</label><select id="simulation-speed"><option value="0.7">Lenta · 0,7 m/s</option><option value="1.4" selected>Normal · 1,4 m/s</option><option value="2.8">Rápida · 2,8 m/s</option></select></div><div><label for="simulation-hold">Pausa por panorama</label><select id="simulation-hold"><option value="0">Sem pausa</option><option value="2">2 segundos</option><option value="5" selected>5 segundos</option><option value="10">10 segundos</option></select></div></div>
-<button id="route" class="secondary" disabled>Ver caminhada simulada</button>
+<label for="simulation-route">Sentido do percurso</label><select id="simulation-route"><option value="auto">Automático · a partir do panorama escolhido</option><option value="outbound">Ida · até ao Panorama 15</option><option value="return">Regresso · até ao Panorama 01</option><option value="roundtrip">Ida e volta</option></select>
 <label class="check"><input id="simulation-look" type="checkbox">Olhar automaticamente durante as pausas</label>
-<p class="hint">Mostra 90° para cada lado e regressa ao centro antes de avançar. Ativa uma pausa por panorama.</p>
+<fieldset id="camera-options" disabled><legend>Movimento da câmara</legend>
+<label for="simulation-camera-mode">Tipo de movimento</label><select id="simulation-camera-mode"><option value="sides">Olhar para os dois lados</option><option value="360">Volta completa · 360°</option></select>
+<div id="camera-sides" class="row"><div><label for="simulation-left">Esquerda · graus</label><input id="simulation-left" type="number" min="0" max="180" step="5" value="90"></div><div><label for="simulation-right">Direita · graus</label><input id="simulation-right" type="number" min="0" max="180" step="5" value="90"></div></div>
+<div id="camera-full-turn" hidden><label for="simulation-turn-direction">Sentido da volta</label><select id="simulation-turn-direction"><option value="right">Para a direita</option><option value="left">Para a esquerda</option></select></div>
+<label for="simulation-camera-duration">Duração do movimento · segundos</label><input id="simulation-camera-duration" type="number" min="2" max="60" step="1" value="10">
+<p class="hint">Escolhe uma pausa para ativar o movimento. Rotação suave, com meio segundo de descanso antes e depois. A pausa aumenta se necessário. Para 360°, recomendamos 20–30 segundos.</p>
+</fieldset>
+<p class="hint">No regresso, a câmara fica voltada para o percurso inverso. Ida e volta regressa ao Panorama 01 (ou ao 15, se começares nele).</p>
 <p class="hint">Podes pausar e retomar durante a demonstração. As definições aplicam-se ao iniciar.</p>
+<button id="route" class="secondary" disabled>Ver caminhada simulada</button>
 </section>
 <details class="advanced-section"><summary>Testar uma posição</summary>
 <label for="scenario">Posição simulada</label><select id="scenario" disabled><option>A carregar os pontos…</option></select>
@@ -85,11 +93,11 @@ body.map-open #visit-panel .panel{max-height:calc(100dvh - 290px)}body.map-expan
 </details>
 <details class="advanced-section"><summary>Localização e diagnóstico</summary>
 <p id="gps-quality" class="hint">GPS: a aguardar caminhada</p><button id="gps" class="secondary" disabled>Verificar a minha localização</button>
-<p id="technical-status" class="technical">A preparar…</p><p id="diagnostics" class="technical">A verificar…</p><a href="https://jf-cem.github.io/tour-pano/?v=7.6" target="_blank" rel="noopener">Abrir diretamente no navegador</a>
-<small>Versão 7.6. Raio de 100 m. Precisão máxima de 20 m. O minimapa usa OpenStreetMap.</small></details>
+<p id="technical-status" class="technical">A preparar…</p><p id="diagnostics" class="technical">A verificar…</p><a href="https://jf-cem.github.io/tour-pano/?v=7.7" target="_blank" rel="noopener">Abrir diretamente no navegador</a>
+<small>Versão 7.7. Raio de 100 m. Precisão máxima de 20 m. O minimapa usa OpenStreetMap.</small></details>
 <button id="reset" class="secondary" disabled>Voltar à primeira imagem</button>
 </details></div></details>
 <section id="route-strip" aria-label="Progresso ao longo da visita"><div class="route-heading"><strong>Percurso</strong><span id="route-position">A aguardar caminhada</span><button id="route-map-toggle" aria-pressed="false">Mapa</button></div><svg id="route-line"  role="img" aria-label="Pontos do percurso. Verde: panorama atual. Azul: posição."></svg><div id="route-labels" aria-hidden="true"></div></section>
 <section id="mini-map-panel" aria-label="Mapa da visita"><div class="map-heading"><strong>Mapa</strong><button id="map-size" aria-label="Ampliar mapa" aria-expanded="false" title="Ampliar mapa">↗</button><button id="map-resize" aria-expanded="false" aria-controls="map-resize-tools" aria-label="Redimensionar o mapa" title="Redimensionar o mapa">↔</button><button id="map-close" aria-label="Ocultar mapa">×</button></div><div id="map-resize-tools" hidden><label for="map-width">Tamanho <output id="map-width-value">160 px</output></label><input id="map-width" type="range" min="160" max="280" step="10" value="160" aria-label="Largura do mapa"></div><div id="mini-map" role="region" aria-label="Pontos da visita e posição durante a caminhada"></div><p id="map-caption">A preparar o mapa…</p></section>
 <button id="map-launch" hidden>Mostrar mapa</button>
-<script src="geo.js?v=7.6"></script><script src="3rdparty/leaflet/leaflet.js"></script><script src="gps-start.js?v=7.6"></script><script src="walk-playback.js?v=7.6"></script><script src="route-strip.js?v=7.6"></script><script src="minimap.js?v=7.6"></script><script src="tour-controls.js?v=7.6"></script><script src="test-ui.js?v=7.6"></script></body></html>
+<script src="geo.js?v=7.7"></script><script src="3rdparty/leaflet/leaflet.js"></script><script src="gps-start.js?v=7.7"></script><script src="walk-playback.js?v=7.7"></script><script src="route-strip.js?v=7.7"></script><script src="minimap.js?v=7.7"></script><script src="tour-controls.js?v=7.7"></script><script src="test-ui.js?v=7.7"></script></body></html>

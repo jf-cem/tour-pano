@@ -1,6 +1,6 @@
 # tour-pano — caminhada panorâmica
 
-## Versão 7.6 — olhar automático nas pausas
+## Versão 7.7 — olhar automático nas pausas
 
 Em **Demonstração automática**, a opção **Olhar automaticamente durante as pausas** está desligada por defeito. Quando ativada com uma pausa maior que zero, a câmara roda suavemente do centro a +90°, depois a −90°, e regressa ao centro antes de continuar. A duração acompanha a pausa escolhida. Pausar/retomar congela e retoma também a rotação. Terminar cancela a animação e repõe a direção inicial do panorama atual. O giroscópio e a autorrotação, quando ligados, ficam temporariamente suspensos durante esta demonstração e são repostos no fim. Sem pausa, não se inicia o movimento automático.
 
@@ -99,3 +99,11 @@ O cabeçalho recolhido ocupa cerca de 50 px e usa uma superfície translúcida c
 A barra mantém cerca de 47 px. As legendas são texto HTML de tamanho nativo, em vez de texto SVG comprimido. A superfície da barra conserva transparência e contraste, sem aplicar blur às letras. A posição vertical é calculada a partir dos limites dos controlos de navegação visíveis da skin, com margem de 24 px; reage a alterações da skin, mudanças de panorama e de tamanho do ecrã. O mapa geográfico acompanha essa posição. As setas originais continuam acessíveis.
 
 Verificado em tamanhos 390 × 652, 320 × 568 e 844 × 390, incluindo cabeçalho recolhido, ausência de sobreposição com os controlos, ativação/desativação e falhas de permissão de movimento simuladas, preparação GPS e os 15 panoramas. A resposta dos sensores físicos e o comportamento no Safari do iPhone exigem confirmação no aparelho.
+
+## Versão 7.7 — demonstração cinematográfica
+
+Opções avançadas reúne velocidade, pausa, sentido do percurso e movimento da câmara antes do botão de iniciar. Ida avança até P15; regresso até P01; ida e volta vai até P15 e regressa a P01 (partindo de P15, faz o inverso). O modo automático mantém o comportamento anterior. No regresso, usa a vista inicial de cada panorama rodada 180 graus.
+
+A câmara opcional permite escolher graus independentes à esquerda/direita (0–180), ou uma volta completa de 360 graus num dos sentidos. A duração é independente (2–60 segundos), com interpolação suave e meio segundo parado antes/depois. A pausa efetiva aumenta para acomodar o movimento; sem pausa não há rotação automática. Definições aplicam-se ao iniciar. Pausar congela a rotação; terminar cancela-a e restaura os sensores previamente ativos.
+
+Validação: node test-walk.cjs, incluindo ordem completa de ida e volta, regresso desde um ponto intermédio, graus assimétricos, 360 nos dois sentidos e orientação de regresso; verificação da interface e reprodução no navegador.

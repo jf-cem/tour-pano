@@ -81,13 +81,28 @@ el('simulation-pause').onclick();clock+=1000;callback();assert.notDeepEqual(reco
 el('stop').onclick();const stopped=records.length;callback();assert.equal(records.length,stopped);
 assert.equal(walk.sweepAngle(0),0);assert.equal(walk.sweepAngle(0.25),90);assert.equal(walk.sweepAngle(0.75),-90);assert.equal(walk.sweepAngle(1),0);
 function cameraFrame(){const pending=[...frames.values()];frames.clear();for(const fn of pending)fn();}
-el('simulation-look').checked=true;el('simulation-hold').value='10';el('route').onclick();
-assert.equal(gyro,false);clock+=2500;cameraFrame();assert.ok(Math.abs(pan-110)<0.01);
+el('simulation-look').checked=true;el('simulation-hold').value='10';el('simulation-camera-duration').value='10';el('route').onclick();
+assert.equal(gyro,false);clock+=3000;cameraFrame();assert.ok(Math.abs(pan-110)<0.01);
 clock+=5000;cameraFrame();assert.ok(Math.abs(pan+70)<0.01);
 el('simulation-pause').onclick();cameraFrame();const pausedPan=pan;clock+=20000;cameraFrame();assert.equal(pan,pausedPan);
 el('simulation-pause').onclick();clock+=2500;cameraFrame();assert.ok(Math.abs(pan-20)<0.01);
 el('stop').onclick();assert.equal(frames.size,0);assert.equal(pan,20);assert.equal(gyro,true);
 el('simulation-hold').value='0';el('route').onclick();assert.equal(frames.size,0);el('stop').onclick();
+// Custom asymmetric sweeps and continuous full turns.
+assert.equal(walk.sweepAngle(.25,{left:60,right:120}),120);
+assert.equal(walk.sweepAngle(.75,{left:60,right:120}),-60);
+assert.equal(walk.sweepAngle(.5,{mode:'360'}),180);
+assert.equal(walk.sweepAngle(1,{mode:'360',direction:'left'}),-360);
+const back=walk.createSimulation(data.nodes,8,1.4,2,0,'return');
+assert.equal(back.tick(1000000).id,data.start);
+const thereAndBack=walk.createSimulation(data.nodes,0,100,1,0,'roundtrip');
+const order=[];for(let t=0;t<40000;t+=100){const state=thereAndBack.tick(t);if(order.at(-1)!==state.id)order.push(state.id);}
+assert.deepEqual(order,[...data.nodes.map(n=>n.id),...data.nodes.slice(0,-1).reverse().map(n=>n.id)]);
+assert.equal(thereAndBack.tick(40000).done,true);
+const fromEnd=walk.createSimulation(data.nodes,14,100,1,0,'roundtrip');
+assert.equal(fromEnd.tick(1000000).id,data.nodes.at(-1).id);
+el('start-panorama').value=data.nodes[8].id;el('simulation-route').value='return';el('simulation-look').checked=false;el('route').onclick();
+assert.equal(pan,data.nodes[8].forwardPan+180);el('stop').onclick();
 console.log('PASS: automatic +/-90 degree sweep, pause/resume, camera restoration, zero-pause opt-out; 15 relative starts, GPS straight walk through curves and return, accuracy rejection, simulation speeds/holds/pause/resume/end, cancellation and absolute GPS.');
 })().catch(e=>{console.error(e);process.exitCode=1;});
 

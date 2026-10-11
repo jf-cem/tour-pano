@@ -36,8 +36,10 @@
       return {coords:path.position(along),along,id:nodes[current].id,calibrating:heading===null,remaining:Math.max(0,calibrationDistance-displacement),end:along===path.total||along===0};
     }};
   }
-  function createSimulation(nodes,startIndex,speed,pauseSeconds,now){
-    const path=route(nodes),direction=startIndex===nodes.length-1?-1:1;
+  function createSimulation(nodes,startIndex,speed,pauseSeconds,now,mode='auto'){
+    const path=route(nodes);
+    let direction=mode==='return'?-1:mode==='outbound'?1:startIndex===nodes.length-1?-1:1;
+    let returning=false;
     let index=startIndex,along=path.cumulative[index],hold=pauseSeconds,last=now,paused=false,done=false;
     return {
       setPaused(value,now){paused=value;last=now;},
@@ -46,18 +48,25 @@
         while(seconds>0&&!paused&&!done){
           if(hold>0){const spent=Math.min(hold,seconds);hold-=spent;seconds-=spent;continue;}
           const next=index+direction;
-          if(next<0||next>=nodes.length){done=true;break;}
+          if(next<0||next>=nodes.length){
+            if(mode==='roundtrip'&&!returning){direction=-direction;returning=true;hold=pauseSeconds;continue;}
+            done=true;break;
+          }
           const duration=Math.abs(path.cumulative[next]-along)/speed;
           if(seconds<duration){along+=direction*speed*seconds;seconds=0;}
-          else {along=path.cumulative[next];index=next;seconds-=duration;hold=pauseSeconds;}
+          else {
+            along=path.cumulative[next];index=next;seconds-=duration;hold=pauseSeconds;
+            if(mode==='roundtrip'&&!returning&&(index===0||index===nodes.length-1)){direction=-direction;returning=true;}
+          }
         }
-        return {coords:path.position(along),along,id:nodes[index].id,paused,waiting:hold>0,lookProgress:pauseSeconds>0?1-hold/pauseSeconds:1,done};
+        return {coords:path.position(along),along,id:nodes[index].id,direction,paused,waiting:hold>0,lookProgress:pauseSeconds>0?1-hold/pauseSeconds:1,done};
       }
     };
   }
-  function sweepAngle(progress){
+  function sweepAngle(progress,options={}){
     const p=Math.max(0,Math.min(1,progress));
-    const points=[[0,0],[0.25,90],[0.75,-90],[1,0]];
+    if(options.mode==='360')return (options.direction==='left'?-360:360)*p*p*(3-2*p);
+    const points=[[0,0],[0.25,options.right??90],[0.75,-(options.left??90)],[1,0]];
     let i=1;while(i<3&&p>points[i][0])i++;
     const [a,x]=points[i-1],[b,y]=points[i],t=(p-a)/(b-a);
     return x+(y-x)*t*t*(3-2*t);

@@ -60,7 +60,7 @@ async function diagnostics() {
   const policy = document.permissionsPolicy || document.featurePolicy;
   let allowed = 'não verificável';
   try { allowed = policy ? (policy.allowsFeature('geolocation') ? 'permitida' : 'bloqueada') : allowed; } catch (_) {}
-  document.getElementById('diagnostics').textContent = `Versão: 7.6\nHTTPS: ${window.isSecureContext ? 'sim' : 'não'}\nAPI de localização: ${navigator.geolocation ? 'disponível' : 'indisponível'}\nPermissão reportada pelo navegador: ${permissionState}\nPolítica da página: ${allowed}\nPágina dentro de outra aplicação/frame: ${window.top !== window.self ? 'sim' : 'não'}\nÚltimo erro: ${lastError || 'nenhum'}\nNavegador: ${navigator.userAgent}`;
+  document.getElementById('diagnostics').textContent = `Versão: 7.7\nHTTPS: ${window.isSecureContext ? 'sim' : 'não'}\nAPI de localização: ${navigator.geolocation ? 'disponível' : 'indisponível'}\nPermissão reportada pelo navegador: ${permissionState}\nPolítica da página: ${allowed}\nPágina dentro de outra aplicação/frame: ${window.top !== window.self ? 'sim' : 'não'}\nÚltimo erro: ${lastError || 'nenhum'}\nNavegador: ${navigator.userAgent}`;
   document.getElementById('diagnostics').textContent+=`\nPreparação inicial: ${preparationSummary}`;
 }
 function stopTracking() {
@@ -261,6 +261,14 @@ function modeChanged() {
 document.getElementById('gps-mode').onchange=modeChanged;
 document.getElementById('align').onchange=modeChanged;
 document.getElementById('straight-walk').onchange=()=>{document.getElementById('align').disabled=document.getElementById('straight-walk').checked;if(ready)modeChanged();};
+function cameraOptionsChanged(){
+  document.getElementById('camera-options').disabled=!document.getElementById('simulation-look').checked;
+  const full=document.getElementById('simulation-camera-mode').value==='360';
+  document.getElementById('camera-sides').hidden=full;
+  document.getElementById('camera-full-turn').hidden=!full;
+}
+document.getElementById('simulation-look').onchange=cameraOptionsChanged;
+document.getElementById('simulation-camera-mode').onchange=cameraOptionsChanged;
 document.getElementById('stop').onclick = () => { stopTracking(); walkState('finished'); status('Acompanhamento / simulação parado. Podes navegar livremente.','Caminhada terminada. Podes continuar a explorar pelas setas ou começar de novo.'); };
 document.getElementById('simulation-pause').onclick=()=>{
   if(!simulation)return;
@@ -276,9 +284,14 @@ document.getElementById('route').onclick = () => {
   window.TourMap?.reset();
   const current=revision,first=selectedStart(),startIndex=data.nodes.indexOf(first);
   const speed=Math.max(0.1,Math.min(10,Number(document.getElementById('simulation-speed').value)||1.4));
-  const hold=Math.max(0,Math.min(30,Number(document.getElementById('simulation-hold').value)||0));
-  simulation=TourWalk.createSimulation(data.nodes,startIndex,speed,hold,Date.now());
-  const autoLook=document.getElementById('simulation-look').checked&&hold>0;
+  const requestedHold=Math.max(0,Math.min(60,Number(document.getElementById('simulation-hold').value)||0));
+  const duration=Math.max(2,Math.min(60,Number(document.getElementById('simulation-camera-duration').value)||Math.max(2,requestedHold-1)));
+  const autoLook=document.getElementById('simulation-look').checked&&requestedHold>0;
+  const hold=autoLook?Math.max(requestedHold,duration+1):requestedHold;
+  const cameraOptions={mode:document.getElementById('simulation-camera-mode').value,direction:document.getElementById('simulation-turn-direction').value,
+    left:Math.max(0,Math.min(180,Number(document.getElementById('simulation-left').value||90))),right:Math.max(0,Math.min(180,Number(document.getElementById('simulation-right').value||90)))};
+  simulation=TourWalk.createSimulation(data.nodes,startIndex,speed,hold,Date.now(),document.getElementById('simulation-route').value||'auto');
+  let orientedNode=null,orientedDirection=null;
   if(autoLook){
     const player=frame.contentWindow.pano;
     cameraSweep={node:null,base:null,state:null,stamp:Date.now(),frame:null,gyro:player.getUseGyro(),autorotate:player.getIsAutorotating?.()};
@@ -288,8 +301,8 @@ document.getElementById('route').onclick = () => {
       if(current!==revision||!cameraSweep)return;
       const sweep=cameraSweep,state=sweep.state;
       if(state&&sweep.base!==null&&state.waiting){
-        const progress=state.lookProgress+(simulationPaused?0:Math.max(0,Date.now()-sweep.stamp)/1000/hold);
-        player.setPan(sweep.base+TourWalk.sweepAngle(progress));
+        const elapsed=state.lookProgress*hold+(simulationPaused?0:Math.max(0,Date.now()-sweep.stamp)/1000);
+        player.setPan(sweep.base+TourWalk.sweepAngle((elapsed-0.5)/duration,cameraOptions));
       }
       sweep.frame=requestAnimationFrame(animate);
     };
@@ -300,8 +313,15 @@ document.getElementById('route').onclick = () => {
     try{
       const state=simulation.tick(Date.now());
       openNode(state.id);
+      const directionChanged=orientedDirection!==null&&orientedDirection!==state.direction;
+      if(orientedNode!==state.id||directionChanged){
+        const player=frame.contentWindow.pano,node=data.nodes.find(n=>n.id===state.id);
+        if(state.direction<0)player.setPan((node.forwardPan??player.getPan())+180);
+        else if(directionChanged)player.setPan(node.forwardPan??player.getPan()-180);
+        orientedNode=state.id;orientedDirection=state.direction;
+      }
       if(cameraSweep){
-        if(cameraSweep.node!==state.id){cameraSweep.node=state.id;cameraSweep.base=frame.contentWindow.pano.getPan();}
+        if(cameraSweep.node!==state.id||directionChanged){cameraSweep.node=state.id;cameraSweep.base=frame.contentWindow.pano.getPan();}
         if(cameraSweep.state?.waiting&&!state.waiting)frame.contentWindow.pano.setPan(cameraSweep.base);
         cameraSweep.state=state;cameraSweep.stamp=Date.now();
       }
@@ -318,7 +338,7 @@ document.getElementById('route').onclick = () => {
 window.addEventListener('pagehide',stopTracking);
 async function init() {
   try {
-    const response = await fetch('nodes.json');
+    const response = await fetch('nodes.json?v=7.7');
     if (!response.ok) throw new Error('Não foi possível carregar os pontos do tour.');
     data = await response.json();
     startPanorama.replaceChildren(...data.nodes.map(node=>{const option=document.createElement('option');option.value=node.id;option.textContent=node.title;return option;}));
