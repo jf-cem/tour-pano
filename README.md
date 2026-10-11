@@ -1,5 +1,17 @@
 # tour-pano — caminhada panorâmica
 
+## Versão 7.5 — modos para gravar uma demonstração
+
+Publicado em https://jf-cem.github.io/tour-pano/?v=7.5.
+
+Em **Opções avançadas → Caminhada fora do local**, ativar **Caminhar em linha reta** e iniciar normalmente. A preparação GPS mantém-se. Caminhar os primeiros 8–30 m em frente calibra a direção; depois, o deslocamento nessa direção avança por toda a polilinha do percurso, sem exigir curvas físicas. Recuar reduz o avanço. Parte do panorama escolhido; o P15 começa no sentido do P14. O panorama segue a ordem do percurso, com confirmação por duas leituras, sem usar proximidade geográfica entre segmentos que se cruzam. A barra usa a distância explícita ao longo do percurso. Leituras antigas, repetidas ou com precisão pior que 20 m não avançam a visita. Uma margem de 2–6 m reduz oscilações pequenas. A precisão real continua dependente do GPS e necessita de confirmação no telemóvel ao ar livre. O alinhamento tradicional fica disponível quando a opção em linha reta está desligada; no modo no local verdadeiro continua a ser usada a localização real.
+
+Em **Demonstração automática**, escolher **Velocidade** (0,7 / 1,4 / 2,8 m/s) e **Pausa por panorama** (0 / 2 / 5 / 10 s), depois tocar em **Ver caminhada simulada**. A velocidade mede distância no percurso, em vez de usar o mesmo tempo em todos os segmentos. A pausa ocorre em cada panorama, incluindo o primeiro e o último. O botão **Pausar simulação / Retomar simulação** preserva a posição e o tempo restante da pausa. Alterações às definições aplicam-se ao iniciar uma nova demonstração. A simulação não pede GPS nem apresenta uma precisão GPS fictícia. É possível recolher o painel e fechar o mapa durante ambos os modos. **Terminar caminhada** cancela os temporizadores e permite reiniciar.
+
+As opções avançadas estão organizadas em caminhada fora do local, demonstração automática, testes de posição e localização/diagnóstico. Foi removida a frase assinalada no painel principal.
+
+Verificação: `node test-walk.cjs` cobre as 15 origens, avanço em linha reta através das curvas, regresso, rejeição de precisão insuficiente, velocidades, pausas, pausa/retoma, finalização, cancelamento e regressão do GPS no local. Verificação visual adicional no navegador.
+
 ## Versão 7.4.1 — percurso e panorama de partida
 
 Publicado em https://jf-cem.github.io/tour-pano/?v=7.4.1 (repositório anteriormente chamado `tour-r02-teste`).

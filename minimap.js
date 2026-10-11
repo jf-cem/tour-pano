@@ -89,8 +89,8 @@
     delete panel.dataset.latitude;delete panel.dataset.longitude;
     caption.textContent='A aguardar a tua posição…';
   }
-  function update(coords, accuracy, virtual) {
-    window.TourRoute?.update(coords,accuracy,virtual);
+  function update(coords, accuracy, virtual, along) {
+    window.TourRoute?.update(coords,accuracy,virtual,along);
     if(!map)return;
     const next=L.latLng(coords.lat,coords.lng);
     if(lastPosition && TourGeo.distance(lastPosition,coords)>0.7)heading=TourGeo.bearing(lastPosition,coords);

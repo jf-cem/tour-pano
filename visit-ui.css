@@ -38,3 +38,13 @@ body[data-walk-state=preparing] .walk-status,body[data-walk-state=walking] .walk
 #start-panorama-field{margin-bottom:16px}
 #start-panorama{font-size:16px;min-height:48px}
 #start-panorama-help{margin-bottom:0}
+
+#start-panorama-field{margin-top:16px}
+#visit-panel .advanced-section{border-top:1px solid #ccdcd0;margin-top:16px;padding-top:14px}
+#visit-panel .advanced-section h3{font-size:16px;line-height:1.4;margin:0 0 8px;color:#163d2c}
+#visit-panel .advanced-section>summary{min-height:44px;font-size:15px;font-weight:650;padding:8px 0;color:#355545}
+#visit-panel .tools .check{align-items:flex-start;gap:10px;font-size:16px}
+#visit-panel .tools .check input{margin:2px 0 0}
+#simulation-pause{min-height:48px;font-size:16px}
+#visit-panel .tools .row{flex-wrap:wrap}
+#visit-panel .tools .row>div{flex:1 1 135px}

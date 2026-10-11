@@ -31,10 +31,11 @@
   new ResizeObserver(resize).observe(svg);
   function setActive(id){active=id;if(!data)return;svg.querySelectorAll('[data-node]').forEach(el=>{const current=el.dataset.node===id;el.setAttribute('r',current?'4':'2.5');el.setAttribute('fill',current?'#74e3a7':'#d6e5df');});}
   function reset(){lastUpdate=null;if(dot)dot.setAttribute('visibility','hidden');if(uncertainty)uncertainty.setAttribute('visibility','hidden');label.textContent='A aguardar caminhada';}
-  function update(coords,accuracy,virtual){
+  function update(coords,accuracy,virtual,along){
     if(!data)return;
-    lastUpdate=[coords,accuracy,virtual];
+    lastUpdate=[coords,accuracy,virtual,along];
     const position=TourGeo.routePosition(coords,data.nodes);
+    if(Number.isFinite(along))position.along=Math.max(0,Math.min(total,along));
     if(position.meters>100){dot.setAttribute('visibility','hidden');uncertainty.setAttribute('visibility','hidden');label.textContent='Fora do percurso';return;}
     dot.setAttribute('cx',x(position.along));dot.setAttribute('visibility','visible');
     const radius=Number.isFinite(accuracy)?accuracy:0;

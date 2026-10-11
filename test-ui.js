@@ -7,12 +7,13 @@ function selectedStart(){return data.nodes.find(node=>node.id===startPanorama.va
 function syncStartHelp(){
   if(!data)return;
   const first=selectedStart(),index=data.nodes.indexOf(first),next=data.nodes[index+1]||data.nodes[index-1];
-  document.getElementById('start-panorama-help').textContent=`Começar em ${first.title}. Os primeiros passos seguem a direção de ${next.title}.`;
+  document.getElementById('start-panorama-help').textContent=`Começar em ${first.title}. ${document.getElementById('straight-walk').checked?'Caminha em frente, sem fazer curvas.':'Os primeiros passos seguem a direção de '+next.title+'.'}`;
 }
 startPanorama.onchange=()=>{stopTracking();window.TourMap?.reset();openNode(selectedStart().id);syncStartHelp();};
 const buttons = ['simulate', 'custom', 'gps', 'reset', 'route', 'follow'].map(id => document.getElementById(id));
 let data, cases = [], revision = 0, watchId = null, routeTimer = null, preparationTimer = null, ready = false;
 let lastError = '', permissionState = 'não disponível', diagnosticRevision = 0;
+let simulation=null,simulationPaused=false;
 let preparationSummary='Ainda não realizada';
 function status(text, friendly = text) {
   document.getElementById('technical-status').textContent = text;
@@ -49,7 +50,7 @@ async function diagnostics() {
   const policy = document.permissionsPolicy || document.featurePolicy;
   let allowed = 'não verificável';
   try { allowed = policy ? (policy.allowsFeature('geolocation') ? 'permitida' : 'bloqueada') : allowed; } catch (_) {}
-  document.getElementById('diagnostics').textContent = `Versão: 7.4.1\nHTTPS: ${window.isSecureContext ? 'sim' : 'não'}\nAPI de localização: ${navigator.geolocation ? 'disponível' : 'indisponível'}\nPermissão reportada pelo navegador: ${permissionState}\nPolítica da página: ${allowed}\nPágina dentro de outra aplicação/frame: ${window.top !== window.self ? 'sim' : 'não'}\nÚltimo erro: ${lastError || 'nenhum'}\nNavegador: ${navigator.userAgent}`;
+  document.getElementById('diagnostics').textContent = `Versão: 7.5\nHTTPS: ${window.isSecureContext ? 'sim' : 'não'}\nAPI de localização: ${navigator.geolocation ? 'disponível' : 'indisponível'}\nPermissão reportada pelo navegador: ${permissionState}\nPolítica da página: ${allowed}\nPágina dentro de outra aplicação/frame: ${window.top !== window.self ? 'sim' : 'não'}\nÚltimo erro: ${lastError || 'nenhum'}\nNavegador: ${navigator.userAgent}`;
   document.getElementById('diagnostics').textContent+=`\nPreparação inicial: ${preparationSummary}`;
 }
 function stopTracking() {
@@ -58,6 +59,9 @@ function stopTracking() {
   if (routeTimer !== null) clearInterval(routeTimer);
   if (preparationTimer !== null) clearInterval(preparationTimer);
   preparationTimer=null;
+  simulation=null;simulationPaused=false;
+  document.getElementById('simulation-pause').hidden=true;
+  document.getElementById('simulation-pause').textContent='Pausar simulação';
   walkState(ready?'ready':'loading');
   document.getElementById('use-position').hidden=true;
   document.getElementById('use-position').onclick=null;
@@ -123,10 +127,12 @@ function startGps(follow) {
   if (!navigator.geolocation) return status('Este navegador não suporta geolocalização.');
   status(follow ? 'Acompanhamento iniciado. A aguardar a primeira posição do aparelho…' : 'A obter a localização real. Autoriza o acesso no navegador.','A procurar a tua localização. Permite o acesso se o navegador pedir.');
   const relative = document.getElementById('gps-mode').value === 'relative';
-  const align = document.getElementById('align').checked;
+  const straight=relative&&document.getElementById('straight-walk').checked;
+  const align = !straight&&document.getElementById('align').checked;
   const first = selectedStart();
   const tracker = TourGeo.createTracker(data.nodes, relative ? first.id : data.start);
   const next = data.nodes[data.nodes.indexOf(first)+1]||data.nodes[data.nodes.indexOf(first)-1];
+  const straightTracker=straight?TourWalk.createStraight(data.nodes,data.nodes.indexOf(first)):null;
   let origin = null, rotation = align ? null : 0;
   let preparing=follow, directionDistance=8;
   const preparation=TourGpsStart.createPreparation();
@@ -163,6 +169,17 @@ function startGps(follow) {
       if(preparing){reportPreparation(preparation.add(position));return;}
       document.getElementById('gps-quality').textContent=`GPS: ±${Math.round(position.coords.accuracy)} m`;
       const coords = {lat:position.coords.latitude, lng:position.coords.longitude};
+      if(follow&&straight){
+        if(!Number.isFinite(position.timestamp)||Date.now()-position.timestamp>10000||position.timestamp>Date.now()+1000)return;
+        const movement=straightTracker.update(coords,position.coords.accuracy,position.timestamp,directionDistance);
+        if(!movement){status('Leitura GPS rejeitada.','A aguardar uma localização mais precisa.');return;}
+        openNode(movement.id);
+        window.TourMap?.update(movement.coords,position.coords.accuracy,true,movement.along);
+        status(`Caminhada em linha reta · ${movement.along.toFixed(1)} m no percurso`,movement.calibrating?
+          `Caminha em frente cerca de ${Math.ceil(movement.remaining)} metros para definir a direção.`:
+          movement.end?'Chegaste ao limite do percurso. Podes recuar para regressar.':'Continua em frente, sem fazer curvas. Recuar faz regressar na visita.');
+        return;
+      }
       if (follow && relative) {
         const accuracy=position.coords.accuracy;
         if (!Number.isFinite(accuracy) || accuracy>20) {
@@ -223,35 +240,45 @@ function modeChanged() {
   const relative=document.getElementById('gps-mode').value==='relative';
   document.getElementById('start-panorama-field').hidden=!relative;
   syncStartHelp();
-  document.getElementById('align-label').hidden=!relative;
-  document.getElementById('relative-help').hidden=!relative;
-  document.getElementById('mode-help').textContent=relative ? 'Os primeiros passos em linha reta definem a direção da visita.' : 'A visita começa na imagem mais próxima da tua localização.';
+  document.getElementById('relative-options').hidden=!relative;
+  document.getElementById('align').disabled=document.getElementById('straight-walk').checked;
+  document.getElementById('align-label').hidden=!relative||document.getElementById('straight-walk').checked;
+  document.getElementById('relative-help').hidden=!relative||document.getElementById('straight-walk').checked;
+
   status(relative ? `Teste aqui: ao iniciar, a tua posição passa a ser ${selectedStart().title}.` : 'Modo no local real: o GPS é comparado com as coordenadas originais da tour.','Pronto. Toca em “Começar caminhada” e permite o acesso à localização.');
 }
 document.getElementById('gps-mode').onchange=modeChanged;
 document.getElementById('align').onchange=modeChanged;
+document.getElementById('straight-walk').onchange=()=>{document.getElementById('align').disabled=document.getElementById('straight-walk').checked;if(ready)modeChanged();};
 document.getElementById('stop').onclick = () => { stopTracking(); walkState('finished'); status('Acompanhamento / simulação parado. Podes navegar livremente.','Caminhada terminada. Podes continuar a explorar pelas setas ou começar de novo.'); };
+document.getElementById('simulation-pause').onclick=()=>{
+  if(!simulation)return;
+  simulationPaused=!simulationPaused;
+  simulation.setPaused(simulationPaused,Date.now());
+  document.getElementById('simulation-pause').textContent=simulationPaused?'Retomar simulação':'Pausar simulação';
+  status(simulationPaused?'Simulação em pausa.':'Simulação retomada.',simulationPaused?'Demonstração em pausa. Podes olhar à volta e retomar quando quiseres.':'Demonstração retomada.');
+};
 document.getElementById('route').onclick = () => {
   stopTracking();
   window.TourMap?.reset();
-  const first=selectedStart(),startIndex=data.nodes.indexOf(first);
-  const simulationNodes=startIndex===data.nodes.length-1?[...data.nodes].reverse():data.nodes.slice(startIndex);
-  const tracker = TourGeo.createTracker(data.nodes, first.id);
-  const path = [first];
-  for (let i=1;i<simulationNodes.length;i++) {
-    const a=simulationNodes[i-1], b=simulationNodes[i];
-    for (let step=1;step<=4;step++) path.push({lat:a.lat+(b.lat-a.lat)*step/4,lng:a.lng+(b.lng-a.lng)*step/4});
-  }
-  path.push(simulationNodes.at(-1));
-  let step=0;
-  const tick = () => {
-    try {
-      trackedPosition(tracker,path[step++],5,`Caminhada simulada · ${step}/${path.length}`);
-      if (step === path.length) { stopTracking(); status(document.getElementById('technical-status').textContent + '\nCaminhada simulada concluída.','A caminhada simulada chegou ao fim. Podes explorar a imagem ou começar uma nova caminhada.'); }
-    } catch (e) { stopTracking(); status(e.message); }
+  const current=revision,first=selectedStart(),startIndex=data.nodes.indexOf(first);
+  const speed=Math.max(0.1,Math.min(10,Number(document.getElementById('simulation-speed').value)||1.4));
+  const hold=Math.max(0,Math.min(30,Number(document.getElementById('simulation-hold').value)||0));
+  simulation=TourWalk.createSimulation(data.nodes,startIndex,speed,hold,Date.now());
+  const tick=()=>{
+    if(current!==revision||!simulation)return;
+    try{
+      const state=simulation.tick(Date.now());
+      openNode(state.id);
+      window.TourMap?.update(state.coords,undefined,true,state.along);
+      if(state.done){stopTracking();walkState('finished');status('Caminhada simulada concluída.','A demonstração chegou ao fim. Podes começar novamente ou explorar pelas setas.');return;}
+      if(!state.paused)status(`Demonstração automática · ${speed} m/s · pausa ${hold} s`,state.waiting?'Pausa no panorama. Podes olhar à volta.':'Demonstração em curso. Podes recolher o painel e fechar o mapa.');
+    }catch(e){stopTracking();status(e.message);}
   };
-  tick(); routeTimer=setInterval(tick,750);
+  routeTimer=setInterval(tick,100);
   activeTracking();
+  document.getElementById('simulation-pause').hidden=false;
+  tick();
 };
 window.addEventListener('pagehide',stopTracking);
 async function init() {
