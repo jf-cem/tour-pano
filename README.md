@@ -1,4 +1,18 @@
-# Tour R02 — teste no telemóvel
+# tour-pano — caminhada panorâmica
+
+## Versão 7.4 — distância e panorama de partida
+
+Publicado em https://jf-cem.github.io/tour-pano/?v=7.4 (repositório anteriormente chamado `tour-r02-teste`).
+
+Em **Quero experimentar aqui**, escolher **Panorama de partida** antes de tocar em **Começar caminhada**. A escolha abre a imagem e acompanha também a navegação pelas setas enquanto a caminhada está parada. A preparação GPS ancora a posição no panorama escolhido. Os primeiros passos alinham a direção com o panorama seguinte; no P15, alinham com o P14. Durante a caminhada a origem fica fixa, mesmo quando a imagem muda. Terminar e voltar a começar usa a escolha atual e uma nova posição GPS.
+
+Em **Estou no local da visita**, o GPS continua a escolher a imagem mais próxima da posição real.
+
+A barra inferior mostra **metros percorridos** desde o início da caminhada, além da posição no percurso. A estimativa acumula as variações da posição projetada no percurso, incluindo ida e regresso; não é a distância absoluta a partir do P01. Começa em zero após a preparação GPS, mantém o total ao terminar e reinicia numa nova caminhada. Navegação manual e redimensionamento da barra não contam metros. Leituras com precisão pior que 20 m são rejeitadas. Uma margem de 2–6 m, dependente da precisão indicada, reduz a contagem de oscilações pequenas; movimentos menores acumulam até ultrapassar essa margem. Fora da área de 100 m não se conta distância e a reentrada estabelece uma nova referência. É uma estimativa do progresso ao longo do percurso, não um pedómetro ou uma medição exata da distância física.
+
+**Ver caminhada simulada**, nas opções avançadas, também parte da imagem escolhida; no P15 percorre a ordem inversa. `node test-walk.cjs` verifica as 15 origens, rotação inicial, reinício, seleção GPS no local real, ida/regresso e rejeição de leituras imprecisas. Verificação visual adicional no navegador com a simulação a partir do P10.
+
+As secções abaixo descrevem o histórico das versões anteriores; as referências à origem obrigatória P01 foram substituídas pelo panorama escolhido na versão 7.4.
 
 ## Mapa da visita (versão 5)
 

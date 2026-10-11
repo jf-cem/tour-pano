@@ -34,3 +34,9 @@ body[data-walk-state=preparing] .walk-status,body[data-walk-state=walking] .walk
 #visit-panel button:focus-visible,#visit-panel summary:focus-visible,#motion-toggle:focus-visible{outline:3px solid #166dc1;outline-offset:3px}
 @media(min-width:601px) and (max-width:740px){#motion-toggle{left:186px}}
 @media(max-height:650px){#visit-panel .panel{max-height:calc(100dvh - 132px)}}
+
+/* Keep session distance readable even on the narrowest phone layout. */
+#walk-distance{font-size:12px;line-height:18px;font-weight:700;color:#fff;white-space:nowrap}
+#start-panorama-field{margin-bottom:16px}
+#start-panorama{font-size:16px;min-height:48px}
+#start-panorama-help{margin-bottom:0}

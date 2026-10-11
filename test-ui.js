@@ -2,6 +2,14 @@
 const frame = document.getElementById('tour');
 const statusBox = document.getElementById('status');
 const scenario = document.getElementById('scenario');
+const startPanorama = document.getElementById('start-panorama');
+function selectedStart(){return data.nodes.find(node=>node.id===startPanorama.value)||data.nodes.find(node=>node.id===data.start);}
+function syncStartHelp(){
+  if(!data)return;
+  const first=selectedStart(),index=data.nodes.indexOf(first),next=data.nodes[index+1]||data.nodes[index-1];
+  document.getElementById('start-panorama-help').textContent=`Começar em ${first.title}. Os primeiros passos seguem a direção de ${next.title}.`;
+}
+startPanorama.onchange=()=>{stopTracking();window.TourMap?.reset();openNode(selectedStart().id);syncStartHelp();};
 const buttons = ['simulate', 'custom', 'gps', 'reset', 'route', 'follow'].map(id => document.getElementById(id));
 let data, cases = [], revision = 0, watchId = null, routeTimer = null, preparationTimer = null, ready = false;
 let lastError = '', permissionState = 'não disponível', diagnosticRevision = 0;
@@ -41,7 +49,7 @@ async function diagnostics() {
   const policy = document.permissionsPolicy || document.featurePolicy;
   let allowed = 'não verificável';
   try { allowed = policy ? (policy.allowsFeature('geolocation') ? 'permitida' : 'bloqueada') : allowed; } catch (_) {}
-  document.getElementById('diagnostics').textContent = `Versão: 7.3\nHTTPS: ${window.isSecureContext ? 'sim' : 'não'}\nAPI de localização: ${navigator.geolocation ? 'disponível' : 'indisponível'}\nPermissão reportada pelo navegador: ${permissionState}\nPolítica da página: ${allowed}\nPágina dentro de outra aplicação/frame: ${window.top !== window.self ? 'sim' : 'não'}\nÚltimo erro: ${lastError || 'nenhum'}\nNavegador: ${navigator.userAgent}`;
+  document.getElementById('diagnostics').textContent = `Versão: 7.4\nHTTPS: ${window.isSecureContext ? 'sim' : 'não'}\nAPI de localização: ${navigator.geolocation ? 'disponível' : 'indisponível'}\nPermissão reportada pelo navegador: ${permissionState}\nPolítica da página: ${allowed}\nPágina dentro de outra aplicação/frame: ${window.top !== window.self ? 'sim' : 'não'}\nÚltimo erro: ${lastError || 'nenhum'}\nNavegador: ${navigator.userAgent}`;
   document.getElementById('diagnostics').textContent+=`\nPreparação inicial: ${preparationSummary}`;
 }
 function stopTracking() {
@@ -103,7 +111,7 @@ function gpsError(error, current) {
   const retrying = watchId !== null && error.code !== 1;
   if (!retrying) {stopTracking();walkState('error');}
   const messages = {1:'O navegador bloqueou a localização (código 1). Isso também pode acontecer quando o acesso está bloqueado pelo sistema ou pela aplicação que abriu o link, mesmo com a permissão do site ativa.',2:'O navegador não conseguiu obter uma posição (código 2).',3:'Não chegou uma posição dentro do tempo de espera (código 3).'};
-  if (!retrying) { try { openNode(data.start); } catch (_) {} }
+  if (!retrying) { try { openNode(document.getElementById('gps-mode').value==='relative'?selectedStart().id:data.start); } catch (_) {} }
   status((messages[error.code] || 'Não foi possível obter a localização.') + (retrying ? '\nO acompanhamento continua ativo, à espera de outra posição.' : '\nAbre “Diagnóstico de localização” e indica a permissão reportada e o último erro. Podes continuar com a caminhada simulada.'), error.code===1 ? 'Não conseguimos aceder à localização. Verifica a permissão no Safari ou Chrome e tenta novamente.' : retrying ? 'A localização está temporariamente indisponível. A caminhada continua ativa, à espera de sinal.' : 'Não foi possível obter a tua localização. Tenta novamente.');
   diagnostics();
 }
@@ -114,11 +122,11 @@ function startGps(follow) {
   if (!window.isSecureContext) return status('A localização real precisa de HTTPS.');
   if (!navigator.geolocation) return status('Este navegador não suporta geolocalização.');
   status(follow ? 'Acompanhamento iniciado. A aguardar a primeira posição do aparelho…' : 'A obter a localização real. Autoriza o acesso no navegador.','A procurar a tua localização. Permite o acesso se o navegador pedir.');
-  const tracker = TourGeo.createTracker(data.nodes, data.start);
   const relative = document.getElementById('gps-mode').value === 'relative';
   const align = document.getElementById('align').checked;
-  const first = data.nodes.find(n=>n.id===data.start);
-  const next = data.nodes[data.nodes.indexOf(first)+1];
+  const first = selectedStart();
+  const tracker = TourGeo.createTracker(data.nodes, relative ? first.id : data.start);
+  const next = data.nodes[data.nodes.indexOf(first)+1]||data.nodes[data.nodes.indexOf(first)-1];
   let origin = null, rotation = align ? null : 0;
   let preparing=follow, directionDistance=8;
   const preparation=TourGpsStart.createPreparation();
@@ -131,6 +139,7 @@ function startGps(follow) {
     walkState('walking');
     preparing=false;clearInterval(preparationTimer);preparationTimer=null;continueButton.hidden=true;
     directionDistance=Math.max(8,Math.min(30,chosen.accuracy*2));
+    window.TourRoute?.startWalk();
     document.getElementById('follow').textContent='Caminhada em curso';
     success({coords:{latitude:chosen.lat,longitude:chosen.lng,accuracy:chosen.accuracy},timestamp:Date.now()});
     diagnostics();
@@ -163,15 +172,17 @@ function startGps(follow) {
         }
         if (!origin) {
           origin={...coords}; openNode(first.id);
-          trackedPosition(tracker,first,accuracy,'Teste com GPS relativo · origem guardada como P01');
-          if (align) status(document.getElementById('technical-status').textContent+`\nCaminha cerca de ${Math.ceil(directionDistance)} m numa direção para alinhar P01 → P02.`,`Posição inicial preparada. Caminha cerca de ${Math.ceil(directionDistance)} metros em linha reta para definir a direção da visita.`);
+          trackedPosition(tracker,first,accuracy,'Teste com GPS relativo · origem guardada como '+first.title);
+          if (align) status(document.getElementById('technical-status').textContent+`\nCaminha cerca de ${Math.ceil(directionDistance)} m numa direção para alinhar ${first.title} → ${next.title}.`,`Posição inicial preparada. Caminha cerca de ${Math.ceil(directionDistance)} metros em linha reta para definir a direção da visita.`);
           return;
         }
         const traveled=TourGeo.distance(origin,coords);
         if (rotation===null) {
           if (traveled<directionDistance) {
-            window.TourMap?.update(TourGeo.destination(first,traveled,TourGeo.bearing(first,next)),accuracy,true);
-            status(`Teste com GPS relativo · origem guardada como P01\nDeslocamento desde o início: ${traveled.toFixed(1)} m.\nA alinhar a direção: caminha até cerca de ${Math.ceil(directionDistance)} m numa direção.\nPrecisão: ±${Math.round(accuracy)} m.`,`Continua em linha reta para definir a direção. Faltam cerca de ${Math.ceil(directionDistance-traveled)} metros.`);return;
+            const virtual=TourGeo.destination(first,traveled,TourGeo.bearing(first,next));
+            window.TourMap?.update(virtual,accuracy,true);
+            window.TourRoute?.record(virtual,accuracy);
+            status(`Teste com GPS relativo · origem guardada como ${first.title}\nDeslocamento desde o início: ${traveled.toFixed(1)} m.\nA alinhar a direção: caminha até cerca de ${Math.ceil(directionDistance)} m numa direção.\nPrecisão: ±${Math.round(accuracy)} m.`,`Continua em linha reta para definir a direção. Faltam cerca de ${Math.ceil(directionDistance-traveled)} metros.`);return;
           }
           rotation=TourGeo.bearing(first,next)-TourGeo.bearing(origin,coords);
         }
@@ -182,7 +193,7 @@ function startGps(follow) {
       else if (relative) {
         openNode(first.id);
         window.TourMap?.update(first,position.coords.accuracy,true);
-        status(`GPS obtido. Precisão: ±${Math.round(position.coords.accuracy)} m.\nToca em “Começar caminhada” para guardar a tua posição como P01 e iniciar o teste aqui.`,'A tua localização está disponível. Toca em “Começar caminhada” para iniciar.');
+        status(`GPS obtido. Precisão: ±${Math.round(position.coords.accuracy)} m.\nToca em “Começar caminhada” para guardar a tua posição como ${first.title} e iniciar o teste aqui.`,'A tua localização está disponível. Toca em “Começar caminhada” para iniciar.');
       } else usePosition(coords, 'Localização real', position.coords.accuracy);
       diagnostics();
     } catch (e) { status(e.message); }
@@ -197,7 +208,7 @@ function startGps(follow) {
 function trackedPosition(tracker, coords, accuracy, source) {
   const decision = tracker(coords, accuracy);
   if (decision.accepted) openNode(decision.id);
-  if (decision.accepted) window.TourMap?.update(coords,accuracy,source!=='GPS em tempo real');
+  if (decision.accepted) {window.TourMap?.update(coords,accuracy,source!=='GPS em tempo real');window.TourRoute?.record(coords,accuracy);}
   const node = data.nodes.find(n => n.id === decision.id);
   let friendly=`Estás em ${node.title}. Continua a caminhar; as imagens mudam automaticamente.`;
   if (!decision.accepted) friendly='O sinal de localização ainda é pouco preciso. Aguarda um momento, de preferência ao ar livre.';
@@ -212,10 +223,12 @@ function modeChanged() {
   syncModeChoices();
   window.TourMap?.reset();
   const relative=document.getElementById('gps-mode').value==='relative';
+  document.getElementById('start-panorama-field').hidden=!relative;
+  syncStartHelp();
   document.getElementById('align-label').hidden=!relative;
   document.getElementById('relative-help').hidden=!relative;
   document.getElementById('mode-help').textContent=relative ? 'Os primeiros passos em linha reta definem a direção da visita.' : 'A visita começa na imagem mais próxima da tua localização.';
-  status(relative ? 'Teste aqui: ao iniciar, a tua posição passa a ser P01.' : 'Modo no local real: o GPS é comparado com as coordenadas originais da tour.','Pronto. Toca em “Começar caminhada” e permite o acesso à localização.');
+  status(relative ? `Teste aqui: ao iniciar, a tua posição passa a ser ${selectedStart().title}.` : 'Modo no local real: o GPS é comparado com as coordenadas originais da tour.','Pronto. Toca em “Começar caminhada” e permite o acesso à localização.');
 }
 document.getElementById('gps-mode').onchange=modeChanged;
 document.getElementById('align').onchange=modeChanged;
@@ -223,13 +236,16 @@ document.getElementById('stop').onclick = () => { stopTracking(); walkState('fin
 document.getElementById('route').onclick = () => {
   stopTracking();
   window.TourMap?.reset();
-  const tracker = TourGeo.createTracker(data.nodes, data.start);
-  const path = [data.nodes[0]];
-  for (let i=1;i<data.nodes.length;i++) {
-    const a=data.nodes[i-1], b=data.nodes[i];
+  window.TourRoute?.startWalk();
+  const first=selectedStart(),startIndex=data.nodes.indexOf(first);
+  const simulationNodes=startIndex===data.nodes.length-1?[...data.nodes].reverse():data.nodes.slice(startIndex);
+  const tracker = TourGeo.createTracker(data.nodes, first.id);
+  const path = [first];
+  for (let i=1;i<simulationNodes.length;i++) {
+    const a=simulationNodes[i-1], b=simulationNodes[i];
     for (let step=1;step<=4;step++) path.push({lat:a.lat+(b.lat-a.lat)*step/4,lng:a.lng+(b.lng-a.lng)*step/4});
   }
-  path.push(data.nodes.at(-1));
+  path.push(simulationNodes.at(-1));
   let step=0;
   const tick = () => {
     try {
@@ -246,6 +262,8 @@ async function init() {
     const response = await fetch('nodes.json');
     if (!response.ok) throw new Error('Não foi possível carregar os pontos do tour.');
     data = await response.json();
+    startPanorama.replaceChildren(...data.nodes.map(node=>{const option=document.createElement('option');option.value=node.id;option.textContent=node.title;return option;}));
+    startPanorama.value=data.start;syncStartHelp();
     window.TourMap?.init(data);
     scenario.replaceChildren();
     function add(label, position) {
@@ -275,10 +293,11 @@ async function init() {
       const node=data.nodes.find(n=>n.id===player.getCurrentNode());
       if(node) document.getElementById('current-label').textContent=node.title;
       if(node) window.TourMap?.setActive(node.id);
+      if(node&&watchId===null&&routeTimer===null){startPanorama.value=node.id;syncStartHelp();}
     };
     player.addListener('changenode',updateLabel);
     updateLabel();
-    scenario.disabled = false; buttons.forEach(button => button.disabled = false);
+    startPanorama.disabled=false;scenario.disabled = false; buttons.forEach(button => button.disabled = false);
     status(`${data.nodes.length} panoramas prontos. Usa “Simular caminhada pela tour” para testar as mudanças automáticas.`,'Pronto. Toca em “Começar caminhada” e permite o acesso à localização.');
   } catch (e) { status(e.message); }
 }
