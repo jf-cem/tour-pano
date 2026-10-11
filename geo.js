@@ -65,21 +65,7 @@
     }
     return {...best,total:cumulative.at(-1),cumulative};
   }
-  // Accumulate progress in either direction; small GPS oscillations stay below
-  // the deadband. The anchor stays put so slow movement can still accumulate.
-  function createWalkDistance(nodes) {
-    let anchor=null, meters=0;
-    return function(position,accuracy=0) {
-      if(!Number.isFinite(accuracy)||accuracy<0||accuracy>20)return meters;
-      const progress=routePosition(position,nodes);
-      if(progress.meters>100){anchor=null;return meters;}
-      if(anchor===null){anchor=progress.along;return meters;}
-      const delta=Math.abs(progress.along-anchor);
-      if(delta>=Math.max(2,Math.min(6,accuracy/2))){meters+=delta;anchor=progress.along;}
-      return meters;
-    };
-  }
-  const api = { distance, nearest, createTracker, bearing, destination, relativePosition, routePosition, createWalkDistance };
+  const api = { distance, nearest, createTracker, bearing, destination, relativePosition, routePosition };
   if (typeof module !== 'undefined' && module.exports) module.exports = api;
   else root.TourGeo = api;
 })(typeof window === 'undefined' ? globalThis : window);

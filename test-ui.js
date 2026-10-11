@@ -49,7 +49,7 @@ async function diagnostics() {
   const policy = document.permissionsPolicy || document.featurePolicy;
   let allowed = 'não verificável';
   try { allowed = policy ? (policy.allowsFeature('geolocation') ? 'permitida' : 'bloqueada') : allowed; } catch (_) {}
-  document.getElementById('diagnostics').textContent = `Versão: 7.4\nHTTPS: ${window.isSecureContext ? 'sim' : 'não'}\nAPI de localização: ${navigator.geolocation ? 'disponível' : 'indisponível'}\nPermissão reportada pelo navegador: ${permissionState}\nPolítica da página: ${allowed}\nPágina dentro de outra aplicação/frame: ${window.top !== window.self ? 'sim' : 'não'}\nÚltimo erro: ${lastError || 'nenhum'}\nNavegador: ${navigator.userAgent}`;
+  document.getElementById('diagnostics').textContent = `Versão: 7.4.1\nHTTPS: ${window.isSecureContext ? 'sim' : 'não'}\nAPI de localização: ${navigator.geolocation ? 'disponível' : 'indisponível'}\nPermissão reportada pelo navegador: ${permissionState}\nPolítica da página: ${allowed}\nPágina dentro de outra aplicação/frame: ${window.top !== window.self ? 'sim' : 'não'}\nÚltimo erro: ${lastError || 'nenhum'}\nNavegador: ${navigator.userAgent}`;
   document.getElementById('diagnostics').textContent+=`\nPreparação inicial: ${preparationSummary}`;
 }
 function stopTracking() {
@@ -139,7 +139,6 @@ function startGps(follow) {
     walkState('walking');
     preparing=false;clearInterval(preparationTimer);preparationTimer=null;continueButton.hidden=true;
     directionDistance=Math.max(8,Math.min(30,chosen.accuracy*2));
-    window.TourRoute?.startWalk();
     document.getElementById('follow').textContent='Caminhada em curso';
     success({coords:{latitude:chosen.lat,longitude:chosen.lng,accuracy:chosen.accuracy},timestamp:Date.now()});
     diagnostics();
@@ -181,7 +180,6 @@ function startGps(follow) {
           if (traveled<directionDistance) {
             const virtual=TourGeo.destination(first,traveled,TourGeo.bearing(first,next));
             window.TourMap?.update(virtual,accuracy,true);
-            window.TourRoute?.record(virtual,accuracy);
             status(`Teste com GPS relativo · origem guardada como ${first.title}\nDeslocamento desde o início: ${traveled.toFixed(1)} m.\nA alinhar a direção: caminha até cerca de ${Math.ceil(directionDistance)} m numa direção.\nPrecisão: ±${Math.round(accuracy)} m.`,`Continua em linha reta para definir a direção. Faltam cerca de ${Math.ceil(directionDistance-traveled)} metros.`);return;
           }
           rotation=TourGeo.bearing(first,next)-TourGeo.bearing(origin,coords);
@@ -208,7 +206,7 @@ function startGps(follow) {
 function trackedPosition(tracker, coords, accuracy, source) {
   const decision = tracker(coords, accuracy);
   if (decision.accepted) openNode(decision.id);
-  if (decision.accepted) {window.TourMap?.update(coords,accuracy,source!=='GPS em tempo real');window.TourRoute?.record(coords,accuracy);}
+  if (decision.accepted) {window.TourMap?.update(coords,accuracy,source!=='GPS em tempo real');}
   const node = data.nodes.find(n => n.id === decision.id);
   let friendly=`Estás em ${node.title}. Continua a caminhar; as imagens mudam automaticamente.`;
   if (!decision.accepted) friendly='O sinal de localização ainda é pouco preciso. Aguarda um momento, de preferência ao ar livre.';
@@ -236,7 +234,6 @@ document.getElementById('stop').onclick = () => { stopTracking(); walkState('fin
 document.getElementById('route').onclick = () => {
   stopTracking();
   window.TourMap?.reset();
-  window.TourRoute?.startWalk();
   const first=selectedStart(),startIndex=data.nodes.indexOf(first);
   const simulationNodes=startIndex===data.nodes.length-1?[...data.nodes].reverse():data.nodes.slice(startIndex);
   const tracker = TourGeo.createTracker(data.nodes, first.id);

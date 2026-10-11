@@ -28,13 +28,9 @@
     if(lastUpdate)update(...lastUpdate);
   }
   let lastUpdate;
-  let distanceCounter,walking=false;
-  const distanceLabel=document.getElementById('walk-distance');
-  function startWalk(){distanceCounter=TourGeo.createWalkDistance(data.nodes);walking=true;distanceLabel.textContent='0 m percorridos';}
-  function record(coords,accuracy){if(walking)distanceLabel.textContent=`${Math.round(distanceCounter(coords,accuracy))} m percorridos`;}
   new ResizeObserver(resize).observe(svg);
   function setActive(id){active=id;if(!data)return;svg.querySelectorAll('[data-node]').forEach(el=>{const current=el.dataset.node===id;el.setAttribute('r',current?'4':'2.5');el.setAttribute('fill',current?'#74e3a7':'#d6e5df');});}
-  function reset(){walking=false;distanceLabel.textContent='0 m percorridos';lastUpdate=null;if(dot)dot.setAttribute('visibility','hidden');if(uncertainty)uncertainty.setAttribute('visibility','hidden');label.textContent='A aguardar caminhada';}
+  function reset(){lastUpdate=null;if(dot)dot.setAttribute('visibility','hidden');if(uncertainty)uncertainty.setAttribute('visibility','hidden');label.textContent='A aguardar caminhada';}
   function update(coords,accuracy,virtual){
     if(!data)return;
     lastUpdate=[coords,accuracy,virtual];
@@ -43,10 +39,10 @@
     dot.setAttribute('cx',x(position.along));dot.setAttribute('visibility','visible');
     const radius=Number.isFinite(accuracy)?accuracy:0;
     uncertainty.setAttribute('x1',x(position.along-radius));uncertainty.setAttribute('x2',x(position.along+radius));uncertainty.setAttribute('visibility','visible');
-    label.textContent=`${virtual?'Teste':'Posição'}: ${Math.round(position.along)} / ${Math.round(total)} m${Number.isFinite(accuracy)?' · ±'+Math.round(accuracy)+' m':''}`;
-    svg.setAttribute('aria-label',`${label.textContent}. Verde: panorama atual. Azul: posição ao longo do percurso.`);
+    label.textContent=`${Math.round(position.along)}/${Math.round(total)} m${Number.isFinite(accuracy)?' ±'+Math.round(accuracy)+' m':''}`;
+    svg.setAttribute('aria-label',`Percurso ${label.textContent}. Verde: panorama atual. Azul: posição ao longo do percurso.`);
   }
-  function pause(){walking=false;if(dot?.getAttribute('visibility')==='visible'&&!label.textContent.endsWith(' · parado'))label.textContent+=' · parado';}
+  function pause(){if(dot?.getAttribute('visibility')==='visible'&&!label.textContent.endsWith(' · parado'))label.textContent+=' · parado';}
   document.getElementById('route-map-toggle').onclick=()=>document.getElementById('mini-map-panel').hidden?document.getElementById('map-launch').click():document.getElementById('map-close').click();
-  window.TourRoute={init,setActive,reset,update,pause,startWalk,record};
+  window.TourRoute={init,setActive,reset,update,pause};
 })();
