@@ -14,6 +14,16 @@ const buttons = ['simulate', 'custom', 'gps', 'reset', 'route', 'follow'].map(id
 let data, cases = [], revision = 0, watchId = null, routeTimer = null, preparationTimer = null, ready = false;
 let lastError = '', permissionState = 'não disponível', diagnosticRevision = 0;
 let simulation=null,simulationPaused=false;
+let cameraSweep=null;
+function stopCameraSweep(){
+  if(!cameraSweep)return;
+  cancelAnimationFrame(cameraSweep.frame);
+  const player=frame.contentWindow.pano;
+  if(cameraSweep.node===player.getCurrentNode()&&cameraSweep.base!==null)player.setPan(cameraSweep.base);
+  if(cameraSweep.gyro)player.setUseGyro(true);
+  if(cameraSweep.autorotate)player.startAutorotate();
+  cameraSweep=null;
+}
 let preparationSummary='Ainda não realizada';
 function status(text, friendly = text) {
   document.getElementById('technical-status').textContent = text;
@@ -50,11 +60,12 @@ async function diagnostics() {
   const policy = document.permissionsPolicy || document.featurePolicy;
   let allowed = 'não verificável';
   try { allowed = policy ? (policy.allowsFeature('geolocation') ? 'permitida' : 'bloqueada') : allowed; } catch (_) {}
-  document.getElementById('diagnostics').textContent = `Versão: 7.5.1\nHTTPS: ${window.isSecureContext ? 'sim' : 'não'}\nAPI de localização: ${navigator.geolocation ? 'disponível' : 'indisponível'}\nPermissão reportada pelo navegador: ${permissionState}\nPolítica da página: ${allowed}\nPágina dentro de outra aplicação/frame: ${window.top !== window.self ? 'sim' : 'não'}\nÚltimo erro: ${lastError || 'nenhum'}\nNavegador: ${navigator.userAgent}`;
+  document.getElementById('diagnostics').textContent = `Versão: 7.6\nHTTPS: ${window.isSecureContext ? 'sim' : 'não'}\nAPI de localização: ${navigator.geolocation ? 'disponível' : 'indisponível'}\nPermissão reportada pelo navegador: ${permissionState}\nPolítica da página: ${allowed}\nPágina dentro de outra aplicação/frame: ${window.top !== window.self ? 'sim' : 'não'}\nÚltimo erro: ${lastError || 'nenhum'}\nNavegador: ${navigator.userAgent}`;
   document.getElementById('diagnostics').textContent+=`\nPreparação inicial: ${preparationSummary}`;
 }
 function stopTracking() {
   revision++;
+  stopCameraSweep();
   if (watchId !== null) navigator.geolocation.clearWatch(watchId);
   if (routeTimer !== null) clearInterval(routeTimer);
   if (preparationTimer !== null) clearInterval(preparationTimer);
@@ -253,8 +264,10 @@ document.getElementById('straight-walk').onchange=()=>{document.getElementById('
 document.getElementById('stop').onclick = () => { stopTracking(); walkState('finished'); status('Acompanhamento / simulação parado. Podes navegar livremente.','Caminhada terminada. Podes continuar a explorar pelas setas ou começar de novo.'); };
 document.getElementById('simulation-pause').onclick=()=>{
   if(!simulation)return;
+  const now=Date.now(),state=simulation.tick(now);
+  if(cameraSweep){cameraSweep.state=state;cameraSweep.stamp=now;}
   simulationPaused=!simulationPaused;
-  simulation.setPaused(simulationPaused,Date.now());
+  simulation.setPaused(simulationPaused,now);
   document.getElementById('simulation-pause').textContent=simulationPaused?'Retomar simulação':'Pausar simulação';
   status(simulationPaused?'Simulação em pausa.':'Simulação retomada.',simulationPaused?'Demonstração em pausa. Podes olhar à volta e retomar quando quiseres.':'Demonstração retomada.');
 };
@@ -265,14 +278,36 @@ document.getElementById('route').onclick = () => {
   const speed=Math.max(0.1,Math.min(10,Number(document.getElementById('simulation-speed').value)||1.4));
   const hold=Math.max(0,Math.min(30,Number(document.getElementById('simulation-hold').value)||0));
   simulation=TourWalk.createSimulation(data.nodes,startIndex,speed,hold,Date.now());
+  const autoLook=document.getElementById('simulation-look').checked&&hold>0;
+  if(autoLook){
+    const player=frame.contentWindow.pano;
+    cameraSweep={node:null,base:null,state:null,stamp:Date.now(),frame:null,gyro:player.getUseGyro(),autorotate:player.getIsAutorotating?.()};
+    if(cameraSweep.gyro)player.setUseGyro(false);
+    if(cameraSweep.autorotate)player.stopAutorotate();
+    const animate=()=>{
+      if(current!==revision||!cameraSweep)return;
+      const sweep=cameraSweep,state=sweep.state;
+      if(state&&sweep.base!==null&&state.waiting){
+        const progress=state.lookProgress+(simulationPaused?0:Math.max(0,Date.now()-sweep.stamp)/1000/hold);
+        player.setPan(sweep.base+TourWalk.sweepAngle(progress));
+      }
+      sweep.frame=requestAnimationFrame(animate);
+    };
+    cameraSweep.frame=requestAnimationFrame(animate);
+  }
   const tick=()=>{
     if(current!==revision||!simulation)return;
     try{
       const state=simulation.tick(Date.now());
       openNode(state.id);
+      if(cameraSweep){
+        if(cameraSweep.node!==state.id){cameraSweep.node=state.id;cameraSweep.base=frame.contentWindow.pano.getPan();}
+        if(cameraSweep.state?.waiting&&!state.waiting)frame.contentWindow.pano.setPan(cameraSweep.base);
+        cameraSweep.state=state;cameraSweep.stamp=Date.now();
+      }
       window.TourMap?.update(state.coords,undefined,true,state.along);
       if(state.done){stopTracking();walkState('finished');status('Caminhada simulada concluída.','A demonstração chegou ao fim. Podes começar novamente ou explorar pelas setas.');return;}
-      if(!state.paused)status(`Demonstração automática · ${speed} m/s · pausa ${hold} s`,state.waiting?'Pausa no panorama. Podes olhar à volta.':'Demonstração em curso. Podes recolher o painel e fechar o mapa.');
+      if(!state.paused)status(`Demonstração automática · ${speed} m/s · pausa ${hold} s`,state.waiting?(autoLook?'Pausa no panorama. A câmara olha automaticamente à volta.':'Pausa no panorama. Podes olhar à volta.'):'Demonstração em curso. Podes recolher o painel e fechar o mapa.');
     }catch(e){stopTracking();status(e.message);}
   };
   routeTimer=setInterval(tick,100);

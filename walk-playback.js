@@ -51,10 +51,17 @@
           if(seconds<duration){along+=direction*speed*seconds;seconds=0;}
           else {along=path.cumulative[next];index=next;seconds-=duration;hold=pauseSeconds;}
         }
-        return {coords:path.position(along),along,id:nodes[index].id,paused,waiting:hold>0,done};
+        return {coords:path.position(along),along,id:nodes[index].id,paused,waiting:hold>0,lookProgress:pauseSeconds>0?1-hold/pauseSeconds:1,done};
       }
     };
   }
-  const api={route,createStraight,createSimulation};
+  function sweepAngle(progress){
+    const p=Math.max(0,Math.min(1,progress));
+    const points=[[0,0],[0.25,90],[0.75,-90],[1,0]];
+    let i=1;while(i<3&&p>points[i][0])i++;
+    const [a,x]=points[i-1],[b,y]=points[i],t=(p-a)/(b-a);
+    return x+(y-x)*t*t*(3-2*t);
+  }
+  const api={route,createStraight,createSimulation,sweepAngle};
   if(typeof module==='object'&&module.exports)module.exports=api;else root.TourWalk=api;
 })(typeof window==='undefined'?globalThis:window);

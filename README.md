@@ -1,5 +1,11 @@
 # tour-pano — caminhada panorâmica
 
+## Versão 7.6 — olhar automático nas pausas
+
+Em **Demonstração automática**, a opção **Olhar automaticamente durante as pausas** está desligada por defeito. Quando ativada com uma pausa maior que zero, a câmara roda suavemente do centro a +90°, depois a −90°, e regressa ao centro antes de continuar. A duração acompanha a pausa escolhida. Pausar/retomar congela e retoma também a rotação. Terminar cancela a animação e repõe a direção inicial do panorama atual. O giroscópio e a autorrotação, quando ligados, ficam temporariamente suspensos durante esta demonstração e são repostos no fim. Sem pausa, não se inicia o movimento automático.
+
+Testes verificam extremos ±90°, regresso ao centro, pausa/retoma, cancelamento e preservação dos modos anteriores. O movimento foi também verificado no navegador.
+
 ## Versão 7.5 — modos para gravar uma demonstração
 
 Publicado em https://jf-cem.github.io/tour-pano/?v=7.5.

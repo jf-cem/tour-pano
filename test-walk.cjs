@@ -8,10 +8,13 @@ const nodes=new Map();
 function el(id){if(!nodes.has(id))nodes.set(id,{value:'',textContent:'',hidden:false,disabled:false,dataset:{},append(){},replaceChildren(){},setAttribute(){}});return nodes.get(id);}
 let active=data.start,listener=()=>{},gpsSuccess,clock=100000,timerId=0;
 const timers=new Map();
+const frames=new Map();let pan=20,gyro=true;
 const records=[];
 const player={getNodeIds:()=>data.nodes.map(n=>n.id),getCurrentNode:()=>active,openNext(id){active=id.slice(1,-1);listener();},addListener(_,fn){listener=fn;}};
 el('tour').contentWindow={pano:player};el('gps-mode').value='relative';el('align').checked=true;
 const context={console,TourGeo:geo,TourGpsStart:require('./gps-start.js'),document:{getElementById:el,createElement:()=>({}),querySelectorAll:()=>[],body:{dataset:{}}},navigator:{permissions:{query:async()=>({state:'granted'})},geolocation:{watchPosition(fn){gpsSuccess=fn;return 42;},clearWatch(){}}},fetch:async()=>({ok:true,json:async()=>data}),setInterval(fn){timers.set(++timerId,fn);return timerId;},clearInterval(id){timers.delete(id);},Date:class extends Date{static now(){return clock;}},window:{isSecureContext:true,addEventListener(){},TourControls:{init(){}},TourMap:{init(){},pause(){},reset(){records.length=0;},update(p){records.push(p);},setActive(){}}}};
+player.getPan=()=>pan;player.setPan=value=>{pan=value;};player.getUseGyro=()=>gyro;player.setUseGyro=value=>{gyro=value;};
+context.requestAnimationFrame=fn=>{frames.set(++timerId,fn);return timerId;};context.cancelAnimationFrame=id=>frames.delete(id);
 context.TourWalk=walk;
 vm.createContext(context);context.window.TourGeo=geo;vm.runInContext(fs.readFileSync('gps-start.js','utf8'),context);context.TourGpsStart=context.window.TourGpsStart;vm.runInContext(fs.readFileSync('test-ui.js','utf8'),context);
 async function flush(){for(let i=0;i<8;i++)await Promise.resolve();}
@@ -76,7 +79,16 @@ const callback=[...timers.values()].at(-1);clock+=3000;callback();const position
 el('simulation-pause').onclick();clock+=100000;callback();assert.deepEqual(records.at(-1),position);
 el('simulation-pause').onclick();clock+=1000;callback();assert.notDeepEqual(records.at(-1),position);
 el('stop').onclick();const stopped=records.length;callback();assert.equal(records.length,stopped);
-console.log('PASS: 15 relative starts, GPS straight walk through curves and return, accuracy rejection, simulation speeds/holds/pause/resume/end, cancellation and absolute GPS.');
+assert.equal(walk.sweepAngle(0),0);assert.equal(walk.sweepAngle(0.25),90);assert.equal(walk.sweepAngle(0.75),-90);assert.equal(walk.sweepAngle(1),0);
+function cameraFrame(){const pending=[...frames.values()];frames.clear();for(const fn of pending)fn();}
+el('simulation-look').checked=true;el('simulation-hold').value='10';el('route').onclick();
+assert.equal(gyro,false);clock+=2500;cameraFrame();assert.ok(Math.abs(pan-110)<0.01);
+clock+=5000;cameraFrame();assert.ok(Math.abs(pan+70)<0.01);
+el('simulation-pause').onclick();cameraFrame();const pausedPan=pan;clock+=20000;cameraFrame();assert.equal(pan,pausedPan);
+el('simulation-pause').onclick();clock+=2500;cameraFrame();assert.ok(Math.abs(pan-20)<0.01);
+el('stop').onclick();assert.equal(frames.size,0);assert.equal(pan,20);assert.equal(gyro,true);
+el('simulation-hold').value='0';el('route').onclick();assert.equal(frames.size,0);el('stop').onclick();
+console.log('PASS: automatic +/-90 degree sweep, pause/resume, camera restoration, zero-pause opt-out; 15 relative starts, GPS straight walk through curves and return, accuracy rejection, simulation speeds/holds/pause/resume/end, cancellation and absolute GPS.');
 })().catch(e=>{console.error(e);process.exitCode=1;});
 
 
