@@ -107,3 +107,7 @@ Opções avançadas reúne velocidade, pausa, sentido do percurso e movimento da
 A câmara opcional permite escolher graus independentes à esquerda/direita (0–180), ou uma volta completa de 360 graus num dos sentidos. A duração é independente (2–60 segundos), com interpolação suave e meio segundo parado antes/depois. A pausa efetiva aumenta para acomodar o movimento; sem pausa não há rotação automática. Definições aplicam-se ao iniciar. Pausar congela a rotação; terminar cancela-a e restaura os sensores previamente ativos.
 
 Validação: node test-walk.cjs, incluindo ordem completa de ida e volta, regresso desde um ponto intermédio, graus assimétricos, 360 nos dois sentidos e orientação de regresso; verificação da interface e reprodução no navegador.
+
+## Versão 7.7.1 — opções avançadas ocultas na página pública
+
+A secção de opções avançadas fica oculta na página pública. Esta alteração de apresentação não implementa autenticação. Na integração CeM, /tour-benfica/dev deverá ser protegido no servidor antes de disponibilizar as ferramentas à equipa.
