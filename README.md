@@ -111,3 +111,7 @@ Validação: node test-walk.cjs, incluindo ordem completa de ida e volta, regres
 ## Versão 7.7.1 — opções avançadas ocultas na página pública
 
 A secção de opções avançadas fica oculta na página pública. Esta alteração de apresentação não implementa autenticação. Na integração CeM, /tour-benfica/dev deverá ser protegido no servidor antes de disponibilizar as ferramentas à equipa.
+
+## Versão 7.7.2 — distância no cabeçalho
+
+O cabeçalho mostra «Distância Percorrida:» e os metros na linha seguinte, com a mesma família de fonte da interface e altura de 44 px. Usa o progresso projetado no percurso já mostrado na barra inferior, incluindo o override da simulação; não soma oscilações de GPS. Reiniciar repõe 0 m; fora do percurso mostra — m. A interface pública mantém as opções avançadas ocultas.
