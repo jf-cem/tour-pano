@@ -115,3 +115,7 @@ A secção de opções avançadas fica oculta na página pública. Esta alteraç
 ## Versão 7.7.2 — distância no cabeçalho
 
 O cabeçalho mostra «Distância Percorrida:» e os metros na linha seguinte, com a mesma família de fonte da interface e altura de 44 px. Usa o progresso projetado no percurso já mostrado na barra inferior, incluindo o override da simulação; não soma oscilações de GPS. Reiniciar repõe 0 m; fora do percurso mostra — m. A interface pública mantém as opções avançadas ocultas.
+
+## Versão 7.7.3 — progresso no percurso
+
+O cabeçalho passa a identificar o valor como Progresso no percurso e mostra X / 84 m (total calculado das coordenadas). O valor diminui no regresso, indicando posição no percurso, não distância acumulada.

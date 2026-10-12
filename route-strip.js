@@ -16,7 +16,7 @@
       if(i===0||i===4||i===9||i===tour.nodes.length-1){const text=document.createElement('span');text.dataset.index=i;text.className=i===0?'first':i===tour.nodes.length-1?'last':'';text.textContent='P'+String(i+1).padStart(2,'0');document.getElementById('route-labels').append(text);}
     });
     dot=element('circle',{cx:6,cy:9,r:4,fill:'#4ab7ff',stroke:'#fff','stroke-width':2,visibility:'hidden'});
-    resize();setActive(tour.start);
+    resize();setActive(tour.start);headerDistance.textContent=`0 / ${Math.round(total)} m`;
   }
   function resize(){
     width=Math.max(24,svg.getBoundingClientRect().width);
@@ -30,14 +30,14 @@
   let lastUpdate;
   new ResizeObserver(resize).observe(svg);
   function setActive(id){active=id;if(!data)return;svg.querySelectorAll('[data-node]').forEach(el=>{const current=el.dataset.node===id;el.setAttribute('r',current?'4':'2.5');el.setAttribute('fill',current?'#74e3a7':'#d6e5df');});}
-  function reset(){lastUpdate=null;if(dot)dot.setAttribute('visibility','hidden');if(uncertainty)uncertainty.setAttribute('visibility','hidden');label.textContent='A aguardar caminhada';headerDistance.textContent='0 m';}
+  function reset(){lastUpdate=null;if(dot)dot.setAttribute('visibility','hidden');if(uncertainty)uncertainty.setAttribute('visibility','hidden');label.textContent='A aguardar caminhada';headerDistance.textContent=`0 / ${Math.round(total)} m`;}
   function update(coords,accuracy,virtual,along){
     if(!data)return;
     lastUpdate=[coords,accuracy,virtual,along];
     const position=TourGeo.routePosition(coords,data.nodes);
     if(Number.isFinite(along))position.along=Math.max(0,Math.min(total,along));
     if(position.meters>100){dot.setAttribute('visibility','hidden');uncertainty.setAttribute('visibility','hidden');label.textContent='Fora do percurso';headerDistance.textContent='— m';return;}
-    headerDistance.textContent=`${Math.round(position.along)} m`;
+    headerDistance.textContent=`${Math.round(position.along)} / ${Math.round(total)} m`;
     dot.setAttribute('cx',x(position.along));dot.setAttribute('visibility','visible');
     const radius=Number.isFinite(accuracy)?accuracy:0;
     uncertainty.setAttribute('x1',x(position.along-radius));uncertainty.setAttribute('x2',x(position.along+radius));uncertainty.setAttribute('visibility','visible');

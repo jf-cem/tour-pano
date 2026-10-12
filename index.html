@@ -32,7 +32,7 @@ body.map-open #visit-panel .panel{max-height:calc(100dvh - 290px)}body.map-expan
 @media(max-width:350px){#visit-panel>summary{padding-right:134px}#motion-toggle{width:93px;font-size:10px}.route-heading span{font-size:10px}}
 @supports not (backdrop-filter:blur(1px)){#visit-panel{background:#e3eee8ee}}
 #motion-toggle{position:fixed;z-index:6;top:max(18px,calc(env(safe-area-inset-top) + 6px));left:calc(12px + min(400px,100vw - 24px) - 142px);right:auto}@media(max-width:350px){#motion-toggle{left:calc(12px + min(400px,100vw - 24px) - 130px)}}@media(min-width:601px) and (max-width:740px){#motion-toggle{left:200px}}
-/* v7.7.2: native-size route drawing and glass on a separate background layer. */
+/* v7.7.3: native-size route drawing and glass on a separate background layer. */
 #route-strip{left:var(--route-side,60px);right:var(--route-side,60px);bottom:max(8px,calc(env(safe-area-inset-bottom) + 8px));padding:3px 52px 1px 10px;isolation:isolate;background:none;backdrop-filter:none;-webkit-backdrop-filter:none;box-shadow:0 3px 14px #0003,inset 0 1px 0 #ffffff50}
 #route-strip:before{content:'';position:absolute;inset:0;z-index:-1;border-radius:inherit;background:linear-gradient(135deg,#204b43c9,#3b6056ae);backdrop-filter:blur(14px) saturate(140%);-webkit-backdrop-filter:blur(14px) saturate(140%)}
 #route-line{height:18px;overflow:visible;filter:none;transform:none}#route-labels{height:11px;line-height:11px;font-size:9px}.route-heading{height:12px}.route-heading strong,.route-heading span{font-size:10px}.route-heading span{overflow:hidden;text-overflow:ellipsis}.route-heading button{top:7px}
@@ -40,9 +40,9 @@ body.map-open #visit-panel .panel{max-height:calc(100dvh - 290px)}body.map-expan
 #mini-map-panel.expanded{width:min(340px,calc(100vw - 24px))}#mini-map-panel.expanded #mini-map{height:min(230px,40dvh)}
 #map-resize-tools{padding:4px 8px 8px;background:#f2f6f3}#map-resize-tools label{display:flex;justify-content:space-between;margin:0;font-size:11px}#map-width{display:block;min-height:32px;height:32px;padding:0;margin:0;accent-color:#17674e}#map-resize[aria-expanded=true]{background:#d5eadf}
 @supports not (backdrop-filter:blur(1px)){#route-strip:before{background:#234d43ee}}
-</style><link rel="stylesheet" href="visit-ui.css?v=7.7.2"></head><body>
+</style><link rel="stylesheet" href="visit-ui.css?v=7.7.3"></head><body>
 <p id="motion-message" role="status" hidden></p><iframe id="tour" src="tour.html" title="Visita virtual" allow="geolocation; fullscreen; accelerometer; gyroscope" allowfullscreen></iframe>
-<button id="motion-toggle" disabled aria-pressed="false" aria-label="Olhar à volta">Olhar à volta</button><details id="visit-panel" open><summary><span class="visit-title"><strong>Visita Virtual</strong><span id="current-label">Caminhar e explorar</span></span><span class="header-distance"><span>Distância Percorrida:</span><strong id="header-distance-value">0 m</strong></span></summary><div class="panel">
+<button id="motion-toggle" disabled aria-pressed="false" aria-label="Olhar à volta">Olhar à volta</button><details id="visit-panel" open><summary><span class="visit-title"><strong>Visita Virtual</strong><span id="current-label">Caminhar e explorar</span></span><span class="header-distance"><span>Progresso no percurso</span><strong id="header-distance-value">0 / 84 m</strong></span></summary><div class="panel">
 <section id="walk-setup" aria-labelledby="setup-heading">
 <p class="intro">Caminha para mudar de imagem automaticamente.</p>
 <h2 id="setup-heading"><span class="step-number" aria-hidden="true">1</span> Onde vais caminhar?</h2>
@@ -93,11 +93,11 @@ body.map-open #visit-panel .panel{max-height:calc(100dvh - 290px)}body.map-expan
 </details>
 <details class="advanced-section"><summary>Localização e diagnóstico</summary>
 <p id="gps-quality" class="hint">GPS: a aguardar caminhada</p><button id="gps" class="secondary" disabled>Verificar a minha localização</button>
-<p id="technical-status" class="technical">A preparar…</p><p id="diagnostics" class="technical">A verificar…</p><a href="https://jf-cem.github.io/tour-pano/?v=7.7.2" target="_blank" rel="noopener">Abrir diretamente no navegador</a>
-<small>Versão 7.7.2. Raio de 100 m. Precisão máxima de 20 m. O minimapa usa OpenStreetMap.</small></details>
+<p id="technical-status" class="technical">A preparar…</p><p id="diagnostics" class="technical">A verificar…</p><a href="https://jf-cem.github.io/tour-pano/?v=7.7.3" target="_blank" rel="noopener">Abrir diretamente no navegador</a>
+<small>Versão 7.7.3. Raio de 100 m. Precisão máxima de 20 m. O minimapa usa OpenStreetMap.</small></details>
 <button id="reset" class="secondary" disabled>Voltar à primeira imagem</button>
 </details></div></details>
 <section id="route-strip" aria-label="Progresso ao longo da visita"><div class="route-heading"><strong>Percurso</strong><span id="route-position">A aguardar caminhada</span><button id="route-map-toggle" aria-pressed="false">Mapa</button></div><svg id="route-line"  role="img" aria-label="Pontos do percurso. Verde: panorama atual. Azul: posição."></svg><div id="route-labels" aria-hidden="true"></div></section>
 <section id="mini-map-panel" aria-label="Mapa da visita"><div class="map-heading"><strong>Mapa</strong><button id="map-size" aria-label="Ampliar mapa" aria-expanded="false" title="Ampliar mapa">↗</button><button id="map-resize" aria-expanded="false" aria-controls="map-resize-tools" aria-label="Redimensionar o mapa" title="Redimensionar o mapa">↔</button><button id="map-close" aria-label="Ocultar mapa">×</button></div><div id="map-resize-tools" hidden><label for="map-width">Tamanho <output id="map-width-value">160 px</output></label><input id="map-width" type="range" min="160" max="280" step="10" value="160" aria-label="Largura do mapa"></div><div id="mini-map" role="region" aria-label="Pontos da visita e posição durante a caminhada"></div><p id="map-caption">A preparar o mapa…</p></section>
 <button id="map-launch" hidden>Mostrar mapa</button>
-<script src="geo.js?v=7.7.2"></script><script src="3rdparty/leaflet/leaflet.js"></script><script src="gps-start.js?v=7.7.2"></script><script src="walk-playback.js?v=7.7.2"></script><script src="route-strip.js?v=7.7.2"></script><script src="minimap.js?v=7.7.2"></script><script src="tour-controls.js?v=7.7.2"></script><script src="test-ui.js?v=7.7.2"></script></body></html>
+<script src="geo.js?v=7.7.3"></script><script src="3rdparty/leaflet/leaflet.js"></script><script src="gps-start.js?v=7.7.3"></script><script src="walk-playback.js?v=7.7.3"></script><script src="route-strip.js?v=7.7.3"></script><script src="minimap.js?v=7.7.3"></script><script src="tour-controls.js?v=7.7.3"></script><script src="test-ui.js?v=7.7.3"></script></body></html>
