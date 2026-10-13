@@ -36,9 +36,14 @@ for(const first of data.nodes){
   el('stop').onclick();
 }
 el('gps-mode').value='absolute';el('gps-mode').onchange();el('follow').onclick();
+assert.equal(el('gps-quality').hidden,false);assert.equal(el('gps-quality').textContent,'Precisão GPS: a aguardar sinal');
+clock+=2000;gpsSuccess({coords:{latitude:data.nodes[7].lat,longitude:data.nodes[7].lng,accuracy:35},timestamp:clock});
+assert.equal(el('gps-quality').textContent,'Precisão GPS: ±35 m · sinal pouco preciso');
 const physical=data.nodes[7];for(let i=0;i<=5;i++){clock+=2000;gpsSuccess({coords:{latitude:physical.lat,longitude:physical.lng,accuracy:4},timestamp:clock});}
 assert.equal(active,physical.id,'absolute GPS still selects nearest panorama');
+assert.equal(el('gps-quality').textContent,'Precisão GPS: ±4 m');
 el('stop').onclick();
+assert.equal(el('gps-quality').hidden,true);
 // Walking straight follows route order through curves and supports returning.
 const path=walk.route(data.nodes),origin={lat:40,lng:-8};
 const straight=walk.createStraight(data.nodes,0);

@@ -27,6 +27,7 @@
 .walk-status{margin-top:8px;padding:8px 10px;border:1px solid #cdded2;border-radius:12px;background:#eaf2ec}
 #visit-panel .walk-status h2{font-size:13px;margin:0 0 3px;color:#345545}
 #status{padding:0;margin:0;border-radius:0;background:none;font-size:14px;line-height:1.4;color:#183c2b;white-space:pre-line}
+#visit-panel #gps-quality{margin:5px 0 0;font-size:13px;line-height:1.4;color:#355545;font-weight:600}
 body[data-walk-state=preparing] .walk-status,body[data-walk-state=walking] .walk-status{border-left:4px solid #17674e}
 .help-section,.tools{margin-top:16px;border-top:1px solid #ccdcd0;padding-top:8px}
 #visit-panel .help-section>summary,#visit-panel .tools>summary{min-height:44px;padding:10px 0;font-size:15px;font-weight:650;color:#355545}

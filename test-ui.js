@@ -60,11 +60,12 @@ async function diagnostics() {
   const policy = document.permissionsPolicy || document.featurePolicy;
   let allowed = 'não verificável';
   try { allowed = policy ? (policy.allowsFeature('geolocation') ? 'permitida' : 'bloqueada') : allowed; } catch (_) {}
-  document.getElementById('diagnostics').textContent = `Versão: 7.7.4\nHTTPS: ${window.isSecureContext ? 'sim' : 'não'}\nAPI de localização: ${navigator.geolocation ? 'disponível' : 'indisponível'}\nPermissão reportada pelo navegador: ${permissionState}\nPolítica da página: ${allowed}\nPágina dentro de outra aplicação/frame: ${window.top !== window.self ? 'sim' : 'não'}\nÚltimo erro: ${lastError || 'nenhum'}\nNavegador: ${navigator.userAgent}`;
+  document.getElementById('diagnostics').textContent = `Versão: 7.7.5\nHTTPS: ${window.isSecureContext ? 'sim' : 'não'}\nAPI de localização: ${navigator.geolocation ? 'disponível' : 'indisponível'}\nPermissão reportada pelo navegador: ${permissionState}\nPolítica da página: ${allowed}\nPágina dentro de outra aplicação/frame: ${window.top !== window.self ? 'sim' : 'não'}\nÚltimo erro: ${lastError || 'nenhum'}\nNavegador: ${navigator.userAgent}`;
   document.getElementById('diagnostics').textContent+=`\nPreparação inicial: ${preparationSummary}`;
 }
 function stopTracking() {
   revision++;
+  document.getElementById('gps-quality').hidden=true;
   stopCameraSweep();
   if (watchId !== null) navigator.geolocation.clearWatch(watchId);
   if (routeTimer !== null) clearInterval(routeTimer);
@@ -125,6 +126,7 @@ function gpsError(error, current) {
   lastError = `Código ${error.code}: ${error.message || '(sem mensagem do navegador)'}`;
   const retrying = watchId !== null && error.code !== 1;
   if (!retrying) {stopTracking();walkState('error');}
+  const quality=document.getElementById('gps-quality');quality.hidden=false;quality.textContent='Precisão GPS: sinal indisponível';
   const messages = {1:'O navegador bloqueou a localização (código 1). Isso também pode acontecer quando o acesso está bloqueado pelo sistema ou pela aplicação que abriu o link, mesmo com a permissão do site ativa.',2:'O navegador não conseguiu obter uma posição (código 2).',3:'Não chegou uma posição dentro do tempo de espera (código 3).'};
   if (!retrying) { try { openNode(document.getElementById('gps-mode').value==='relative'?selectedStart().id:data.start); } catch (_) {} }
   status((messages[error.code] || 'Não foi possível obter a localização.') + (retrying ? '\nO acompanhamento continua ativo, à espera de outra posição.' : '\nAbre “Diagnóstico de localização” e indica a permissão reportada e o último erro. Podes continuar com a caminhada simulada.'), error.code===1 ? 'Não conseguimos aceder à localização. Verifica a permissão no Safari ou Chrome e tenta novamente.' : retrying ? 'A localização está temporariamente indisponível. A caminhada continua ativa, à espera de sinal.' : 'Não foi possível obter a tua localização. Tenta novamente.');
@@ -136,6 +138,7 @@ function startGps(follow) {
   lastError = ''; diagnostics();
   if (!window.isSecureContext) return status('A localização real precisa de HTTPS.');
   if (!navigator.geolocation) return status('Este navegador não suporta geolocalização.');
+  const quality=document.getElementById('gps-quality');quality.hidden=false;quality.textContent='Precisão GPS: a aguardar sinal';
   status(follow ? 'Acompanhamento iniciado. A aguardar a primeira posição do aparelho…' : 'A obter a localização real. Autoriza o acesso no navegador.','A procurar a tua localização. Permite o acesso se o navegador pedir.');
   const relative = document.getElementById('gps-mode').value === 'relative';
   const straight=relative&&document.getElementById('straight-walk').checked;
@@ -166,7 +169,6 @@ function startGps(follow) {
     continueButton.hidden=!result.fallback;
     const seconds=Math.ceil(Math.max(0,10000-result.elapsed)/1000);
     const accuracy=result.accuracy===null?'A aguardar sinal':`±${Math.round(result.accuracy)} m`;
-    document.getElementById('gps-quality').textContent=`GPS: ${accuracy}`;
     status(`Preparação inicial · ${result.count}/5 leituras\nPrecisão do aparelho: ${accuracy}\nDispersão: ${Number.isFinite(result.spread)?result.spread.toFixed(1)+' m':'a aguardar'}\nTempo: ${Math.floor(result.elapsed/1000)} s.`,
       seconds>0?`A preparar a localização… Fica parado por cerca de ${seconds} segundos.`:
       result.fallback?'A posição ainda oscila. Podes aguardar ou começar com a melhor leitura recente.':
@@ -177,8 +179,10 @@ function startGps(follow) {
   const success = position => {
     if (current !== revision) return;
     try {
+      const accuracy=position.coords.accuracy;
+      const old=!Number.isFinite(position.timestamp)||Date.now()-position.timestamp>10000;
+      quality.textContent=Number.isFinite(accuracy)&&accuracy>=0?`Precisão GPS: ±${Math.round(accuracy)} m${old?' · leitura antiga':accuracy>20?' · sinal pouco preciso':''}`:'Precisão GPS: indisponível';
       if(preparing){reportPreparation(preparation.add(position));return;}
-      document.getElementById('gps-quality').textContent=`GPS: ±${Math.round(position.coords.accuracy)} m`;
       const coords = {lat:position.coords.latitude, lng:position.coords.longitude};
       if(follow&&straight){
         if(!Number.isFinite(position.timestamp)||Date.now()-position.timestamp>10000||position.timestamp>Date.now()+1000)return;
@@ -338,7 +342,7 @@ document.getElementById('route').onclick = () => {
 window.addEventListener('pagehide',stopTracking);
 async function init() {
   try {
-    const response = await fetch('nodes.json?v=7.7.4');
+    const response = await fetch('nodes.json?v=7.7.5');
     if (!response.ok) throw new Error('Não foi possível carregar os pontos do tour.');
     data = await response.json();
     startPanorama.replaceChildren(...data.nodes.map(node=>{const option=document.createElement('option');option.value=node.id;option.textContent=node.title;return option;}));
