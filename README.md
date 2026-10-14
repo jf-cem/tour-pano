@@ -1,5 +1,15 @@
 # tour-pano — caminhada panorâmica
 
+## Versão 7.7.13 — coordenadas e nortes no referencial corrigido
+
+Reconstruída a partir da 7.7.6 (`a7b6e7b`), por instrução do utilizador: o conjunto de posições roda 180° em torno do ponto médio original de P01/P15. As posições corrigidas ficam guardadas em `nodes.json` e `pano.xml`; não existe rotação adicional no carregamento. Os nortes do XML recebem +180° módulo 360, mantendo o mesmo referencial geográfico. IDs, ordem, imagens, hotspots, conteúdos e vistas locais de autoria conservados.
+
+O player original do Pano2VR permanece inalterado. Não há inversão horizontal nem compensação inicial ±90°. Caminhada, setas e menus usam o target nativo `$fwd` para preservar pan relativo ao norte, tilt e FOV ao mudar de panorama. O gyro continua a ancorar à vista aberta ao ativar; não foi acrescentada uma bússola absoluta.
+
+Verificado tecnicamente: testes existentes de caminhada/simulação; correspondência de 15 posições e nortes JSON/XML; player idêntico à base; 28 transições de ida e regresso em Edge 155 com sensores contínuos simulados, incluindo P12/P13/P14, sem erro de orientação superior a 0,01°. Capturas abertas e examinadas; zero erros JavaScript e zero respostas de recursos >=400 no ensaio local. Testes desktop e viewport móvel não validam sensores físicos nem precisão GPS em iPhone/Safari.
+
+Provas e reprodução em `outputs/browser/pano-coordenadas-este/`, na raiz do workspace. Incluem `RELATORIO.md`, os dados antes/depois e uma cópia editável `R02-coordenadas-este.p2vr`. O projeto de origem em D: permanece intacto. A rotação corresponde à instrução do utilizador; confirmar implantação, nortes e comportamento físico no local antes de considerar o resultado aprovado. O estado de publicação é registado no relatório local.
+
 ## Versão 7.7 — olhar automático nas pausas
 
 Em **Demonstração automática**, a opção **Olhar automaticamente durante as pausas** está desligada por defeito. Quando ativada com uma pausa maior que zero, a câmara roda suavemente do centro a +90°, depois a −90°, e regressa ao centro antes de continuar. A duração acompanha a pausa escolhida. Pausar/retomar congela e retoma também a rotação. Terminar cancela a animação e repõe a direção inicial do panorama atual. O giroscópio e a autorrotação, quando ligados, ficam temporariamente suspensos durante esta demonstração e são repostos no fim. Sem pausa, não se inicia o movimento automático.
@@ -119,17 +129,3 @@ O cabeçalho mostra «Distância Percorrida:» e os metros na linha seguinte, co
 ## Versão 7.7.3 — progresso no percurso
 
 O cabeçalho passa a identificar o valor como Progresso no percurso e mostra X / 84 m (total calculado das coordenadas). O valor diminui no regresso, indicando posição no percurso, não distância acumulada.
-
-## Versão 7.7.7 — ensaio de rotação geográfica de 180°
-
-Por pedido do utilizador, que reportou P15 no início físico, aplica-se uma meia-volta às posições geográficas em torno do ponto médio das coordenadas originais de P01/P15. No runtime, P01 passa à coordenada antiga de P15 e P15 à antiga de P01. Todos os pontos intermédios também rodam; não é apenas uma inversão da lista. Mapa, GPS e progresso usam o mesmo conjunto transformado. Imagens, IDs, orientação da câmara e coordenadas originais em nodes.json/pano.xml são preservados. O modo remoto também recebe a geometria transformada.
-
-Ativação reversível em nodes.json: gpsRotation = 180. Para repor o posicionamento original, usar 0 e atualizar os identificadores de cache. Esta é uma hipótese de calibração, não uma correspondência validada no terreno. Necessário confirmar P01/P15 e pontos intermédios com referências físicas. Os testes verificam troca dos extremos, seleção por proximidade, reversibilidade, preservação dos originais e regressões da caminhada.
-
-## Restauro da 7.7.7 — 14 de outubro de 2026
-
-Por instrução do utilizador, reposto o comportamento do commit `41b417a`: rotação GPS de 180° mantida, player original, sem inversão horizontal e sem compensação inicial de ±90°. Também retiradas as mudanças de transição da 7.7.12, para retomar a investigação a partir desta base. O histórico Git conserva as tentativas posteriores. Os URLs de cache usam `7.7.7-restauro-20261014`; a versão funcional permanece 7.7.7.
-
-Verificação: `node test-walk.cjs`, sintaxe do player e ensaio no Edge/Chromium com viewport 390 × 844, DPR 1, GPS e orientação simulados. No modo «Estou no local da visita», uma rotação horizontal de 90° para a direita produz a resposta esperada. As 14 mudanças GPS entre os 15 panoramas foram exercitadas; com orientação constante, P12→P13 muda o pan relativo ao norte +119,402° e P13→P14 −117,716°, porque se abre a vista inicial de cada panorama. O giroscópio ancora à vista aberta quando se ativa, em ambos os modos, sem alinhamento automático ao norte físico. Não foram aplicadas novas correções.
-
-Provas locais em `outputs/browser/pano-restauro-777/`, na raiz do espaço de trabalho: `RELATORIO.md`, `diagnostico.cjs`, `resultados.json` e capturas. O ensaio confirma lógica e aparência no browser desktop; o alinhamento dos panoramas com referências físicas e o comportamento dos sensores no Safari/iPhone continuam por verificar no aparelho.

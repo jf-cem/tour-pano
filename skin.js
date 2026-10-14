@@ -808,7 +808,7 @@ function pano2vrSkin(player,base) {
 			}
 		}
 		me._cr_next.onclick=function (e) {
-			player.openNext("{"+player.getNextNode()+"}","");
+			player.openNext("{"+player.getNextNode()+"}","$fwd");
 		}
 		me._cr_next.onmouseenter=function (e) {
 			me.elementMouseOver['cr_next']=true;
@@ -2055,7 +2055,7 @@ function pano2vrSkin(player,base) {
 			}
 		}
 		me._cl_previous_.onclick=function (e) {
-			player.openNext("{"+player.getPrevNode()+"}","");
+			player.openNext("{"+player.getPrevNode()+"}","$fwd");
 		}
 		me._cl_previous_.onmouseenter=function (e) {
 			me.elementMouseOver['cl_previous_']=true;
@@ -4017,7 +4017,7 @@ navigator.share({ url: shareUrl });
 			}
 		}
 		me._controller_next.onclick=function (e) {
-			player.openNext("{"+player.getNextNode()+"}","");
+			player.openNext("{"+player.getNextNode()+"}","$fwd");
 		}
 		me._controller_next.onmouseenter=function (e) {
 			me.elementMouseOver['controller_next']=true;
@@ -4171,7 +4171,7 @@ navigator.share({ url: shareUrl });
 			}
 		}
 		me._controller_previous_.onclick=function (e) {
-			player.openNext("{"+player.getPrevNode()+"}","");
+			player.openNext("{"+player.getPrevNode()+"}","$fwd");
 		}
 		me._controller_previous_.onmouseenter=function (e) {
 			me.elementMouseOver['controller_previous_']=true;
@@ -5467,7 +5467,7 @@ navigator.share({ url: shareUrl });
 			}
 		}
 		me._phone_next.onclick=function (e) {
-			player.openNext("{"+player.getNextNode()+"}","");
+			player.openNext("{"+player.getNextNode()+"}","$fwd");
 		}
 		me._phone_next.onmouseenter=function (e) {
 			me.elementMouseOver['phone_next']=true;
@@ -5623,7 +5623,7 @@ navigator.share({ url: shareUrl });
 			}
 		}
 		me._phone_previous_.onclick=function (e) {
-			player.openNext("{"+player.getPrevNode()+"}","");
+			player.openNext("{"+player.getPrevNode()+"}","$fwd");
 		}
 		me._phone_previous_.onmouseenter=function (e) {
 			me.elementMouseOver['phone_previous_']=true;
@@ -13695,7 +13695,7 @@ pano.on("modelloaded", () => { pano.setVariableValue("model_loading", false); })
 		}
 		me._thumbnail_node_image_phone.onclick=function (e) {
 			if (me._thumbnail_node_image_phone.isDragging()) return;
-			player.openNext("{"+me.ggNodeId+"}","");
+			player.openNext("{"+me.ggNodeId+"}","$fwd");
 			player.setVariableValue('vis_phone_thumbs', false);
 			player.setVariableValue('vis_phone_popup', false);
 		}
@@ -14029,7 +14029,7 @@ pano.on("modelloaded", () => { pano.setVariableValue("model_loading", false); })
 		}
 		me._thumbnails_fs_node_image.onclick=function (e) {
 			if (me._thumbnails_fs_node_image.isDragging()) return;
-			player.openNext("{"+me.ggNodeId+"}","");
+			player.openNext("{"+me.ggNodeId+"}","$fwd");
 			player.setVariableValue('vis_thumbnails_full', false);
 		}
 		me._thumbnails_fs_node_image.onmouseenter=function (e) {
@@ -14396,7 +14396,7 @@ pano.on("modelloaded", () => { pano.setVariableValue("model_loading", false); })
 		}
 		me._thumbnails_node_image.onclick=function (e) {
 			if (me._thumbnails_node_image.isDragging()) return;
-			player.openNext("{"+me.ggNodeId+"}","");
+			player.openNext("{"+me.ggNodeId+"}","$fwd");
 		}
 		me._thumbnails_node_image.onmouseenter=function (e) {
 			me.elementMouseOver['thumbnails_node_image']=true;
@@ -14884,7 +14884,7 @@ pano.on("modelloaded", () => { pano.setVariableValue("model_loading", false); })
 			}
 		}
 		me._map_pin_inactive.onclick=function (e) {
-			player.openNext("{"+me.ggNodeId+"}","");
+			player.openNext("{"+me.ggNodeId+"}","$fwd");
 			if (
 				(
 					((player.getVariableValue('resp_phone') == true))

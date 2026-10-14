@@ -60,7 +60,7 @@ async function diagnostics() {
   const policy = document.permissionsPolicy || document.featurePolicy;
   let allowed = 'não verificável';
   try { allowed = policy ? (policy.allowsFeature('geolocation') ? 'permitida' : 'bloqueada') : allowed; } catch (_) {}
-  document.getElementById('diagnostics').textContent = `Versão: 7.7.7\nHTTPS: ${window.isSecureContext ? 'sim' : 'não'}\nAPI de localização: ${navigator.geolocation ? 'disponível' : 'indisponível'}\nPermissão reportada pelo navegador: ${permissionState}\nPolítica da página: ${allowed}\nPágina dentro de outra aplicação/frame: ${window.top !== window.self ? 'sim' : 'não'}\nÚltimo erro: ${lastError || 'nenhum'}\nNavegador: ${navigator.userAgent}`;
+  document.getElementById('diagnostics').textContent = `Versão: 7.7.13\nHTTPS: ${window.isSecureContext ? 'sim' : 'não'}\nAPI de localização: ${navigator.geolocation ? 'disponível' : 'indisponível'}\nPermissão reportada pelo navegador: ${permissionState}\nPolítica da página: ${allowed}\nPágina dentro de outra aplicação/frame: ${window.top !== window.self ? 'sim' : 'não'}\nÚltimo erro: ${lastError || 'nenhum'}\nNavegador: ${navigator.userAgent}`;
   document.getElementById('diagnostics').textContent+=`\nPreparação inicial: ${preparationSummary}`;
 }
 function stopTracking() {
@@ -87,7 +87,7 @@ function stopTracking() {
 function openNode(id) {
   const player = frame.contentWindow.pano;
   if (!player || !player.getNodeIds().includes(id)) throw new Error('O tour ainda está a carregar. Tenta novamente.');
-  if (player.getCurrentNode() !== id) player.openNext('{' + id + '}', '');
+  if (player.getCurrentNode() !== id) player.openNext('{' + id + '}', '$fwd');
   const node=data.nodes.find(n=>n.id===id);
   if (node) document.getElementById('current-label').textContent=node.title;
   window.TourMap?.setActive(id);
@@ -342,10 +342,9 @@ document.getElementById('route').onclick = () => {
 window.addEventListener('pagehide',stopTracking);
 async function init() {
   try {
-    const response = await fetch('nodes.json?v=7.7.7-restauro-20261014');
+    const response = await fetch('nodes.json?v=7.7.13');
     if (!response.ok) throw new Error('Não foi possível carregar os pontos do tour.');
     data = await response.json();
-    if(data.gpsRotation===180)data.nodes=TourGeo.rotateRoute180(data.nodes);
     startPanorama.replaceChildren(...data.nodes.map(node=>{const option=document.createElement('option');option.value=node.id;option.textContent=node.title;return option;}));
     startPanorama.value=data.start;syncStartHelp();
     window.TourMap?.init(data);

@@ -7,8 +7,8 @@
       <level height="512" predecode="1" preload="1" width="512"/>
       <preview color="0x808080" strip="1"/>
     </input>
-    <userdata altitude="0.00" author="" capturedatetime="2026-09-30T17:09:20" comment="" copyright="" customnodeid="" datetime="" description="" heading="294.4" hideinlist="0" info="" latitude="38.74869721" longitude="-9.20120518" nodeid="node3" source="" tags="R02" title="Panorama 01"/>
-    <view fovmode="2" pannorth="294.4">
+    <userdata altitude="0.00" author="" capturedatetime="2026-09-30T17:09:20" comment="" copyright="" customnodeid="" datetime="" description="" heading="114.4" hideinlist="0" info="" latitude="38.74887937" longitude="-9.20186373" nodeid="node3" source="" tags="R02" title="Panorama 01"/>
+    <view fovmode="2" pannorth="114.4">
       <start fov="100" pan="-3.72486" projection="4" tilt="4.6778"/>
       <flyin fov="170" pan="0" projection="9" tilt="-90"/>
       <min fov="1" pan="0" tilt="-90"/>
@@ -27,8 +27,8 @@
       <level height="512" predecode="1" preload="1" width="512"/>
       <preview color="0x808080" strip="1"/>
     </input>
-    <userdata altitude="0.00" author="" capturedatetime="2026-09-30T16:51:21" comment="" copyright="" customnodeid="" datetime="" description="" heading="288.117" hideinlist="0" info="" latitude="38.74872382" longitude="-9.20128880" nodeid="node4" source="" tags="R02" title="Panorama 02"/>
-    <view fovmode="2" pannorth="288.117">
+    <userdata altitude="0.00" author="" capturedatetime="2026-09-30T16:51:21" comment="" copyright="" customnodeid="" datetime="" description="" heading="108.117" hideinlist="0" info="" latitude="38.74885276" longitude="-9.20178011" nodeid="node4" source="" tags="R02" title="Panorama 02"/>
+    <view fovmode="2" pannorth="108.117">
       <start fov="100" pan="-1.31493" projection="4" tilt="-0.418342"/>
       <flyin fov="170" pan="0" projection="9" tilt="-90"/>
       <min fov="1" pan="0" tilt="-90"/>
@@ -48,8 +48,8 @@
       <level height="512" predecode="1" preload="1" width="512"/>
       <preview color="0x808080" strip="1"/>
     </input>
-    <userdata altitude="0.00" author="" capturedatetime="2026-09-30T16:38:04" comment="" copyright="" customnodeid="" datetime="" description="" heading="292.173" hideinlist="0" info="" latitude="38.74873891" longitude="-9.20140854" nodeid="node5" source="" tags="R02" title="Panorama 03"/>
-    <view fovmode="2" pannorth="292.173">
+    <userdata altitude="0.00" author="" capturedatetime="2026-09-30T16:38:04" comment="" copyright="" customnodeid="" datetime="" description="" heading="112.173" hideinlist="0" info="" latitude="38.74883767" longitude="-9.20166037" nodeid="node5" source="" tags="R02" title="Panorama 03"/>
+    <view fovmode="2" pannorth="112.173">
       <start fov="100" pan="1.14215" projection="4" tilt="2.8101"/>
       <flyin fov="170" pan="0" projection="9" tilt="-90"/>
       <min fov="1" pan="0" tilt="-90"/>
@@ -69,8 +69,8 @@
       <level height="512" predecode="1" preload="1" width="512"/>
       <preview color="0x808080" strip="1"/>
     </input>
-    <userdata altitude="0.00" author="" capturedatetime="2026-09-30T16:45:07" comment="" copyright="" customnodeid="" datetime="" description="" heading="290.148" hideinlist="0" info="" latitude="38.74876650" longitude="-9.20153344" nodeid="node6" source="" tags="R02" title="Panorama 04"/>
-    <view fovmode="2" pannorth="290.148">
+    <userdata altitude="0.00" author="" capturedatetime="2026-09-30T16:45:07" comment="" copyright="" customnodeid="" datetime="" description="" heading="110.148" hideinlist="0" info="" latitude="38.74881008" longitude="-9.20153547" nodeid="node6" source="" tags="R02" title="Panorama 04"/>
+    <view fovmode="2" pannorth="110.148">
       <start fov="100" pan="-18.8898" projection="4" tilt="-3.74528"/>
       <flyin fov="170" pan="0" projection="9" tilt="-90"/>
       <min fov="1" pan="0" tilt="-90"/>
@@ -90,8 +90,8 @@
       <level height="512" predecode="1" preload="1" width="512"/>
       <preview color="0x808080" strip="1"/>
     </input>
-    <userdata altitude="0.00" author="" capturedatetime="2026-09-30T16:26:58" comment="" copyright="" customnodeid="" datetime="" description="" heading="288.603" hideinlist="0" info="" latitude="38.74878482" longitude="-9.20159429" nodeid="node7" source="" tags="R02" title="Panorama 05"/>
-    <view fovmode="2" pannorth="288.603">
+    <userdata altitude="0.00" author="" capturedatetime="2026-09-30T16:26:58" comment="" copyright="" customnodeid="" datetime="" description="" heading="108.603" hideinlist="0" info="" latitude="38.74879176" longitude="-9.20147462" nodeid="node7" source="" tags="R02" title="Panorama 05"/>
+    <view fovmode="2" pannorth="108.603">
       <start fov="100" pan="-28.7187" projection="4" tilt="0.981716"/>
       <flyin fov="170" pan="0" projection="9" tilt="-90"/>
       <min fov="1" pan="0" tilt="-90"/>
@@ -111,8 +111,8 @@
       <level height="512" predecode="1" preload="1" width="512"/>
       <preview color="0x808080" strip="1"/>
     </input>
-    <userdata altitude="0.00" author="" capturedatetime="2026-09-30T16:18:13" comment="" copyright="" customnodeid="" datetime="" description="" heading="287.003" hideinlist="0" info="" latitude="38.74879857" longitude="-9.20164341" nodeid="node8" source="" tags="R02" title="Panorama 06"/>
-    <view fovmode="2" pannorth="287.003">
+    <userdata altitude="0.00" author="" capturedatetime="2026-09-30T16:18:13" comment="" copyright="" customnodeid="" datetime="" description="" heading="107.003" hideinlist="0" info="" latitude="38.74877801" longitude="-9.2014255" nodeid="node8" source="" tags="R02" title="Panorama 06"/>
+    <view fovmode="2" pannorth="107.003">
       <start fov="100" pan="-12.5766" projection="4" tilt="1.14867"/>
       <flyin fov="170" pan="0" projection="9" tilt="-90"/>
       <min fov="1" pan="0" tilt="-90"/>
@@ -132,8 +132,8 @@
       <level height="512" predecode="1" preload="1" width="512"/>
       <preview color="0x808080" strip="1"/>
     </input>
-    <userdata altitude="0.00" author="" capturedatetime="2026-09-30T16:11:19" comment="" copyright="" customnodeid="" datetime="" description="" heading="297.389" hideinlist="0" info="" latitude="38.74880417" longitude="-9.20167409" nodeid="node10" source="" tags="R02" title="Panorama 07"/>
-    <view fovmode="2" pannorth="297.389">
+    <userdata altitude="0.00" author="" capturedatetime="2026-09-30T16:11:19" comment="" copyright="" customnodeid="" datetime="" description="" heading="117.389" hideinlist="0" info="" latitude="38.74877241" longitude="-9.20139482" nodeid="node10" source="" tags="R02" title="Panorama 07"/>
+    <view fovmode="2" pannorth="117.389">
       <start fov="100" pan="-23.4948" projection="4" tilt="0.689188"/>
       <flyin fov="170" pan="0" projection="9" tilt="-90"/>
       <min fov="1" pan="0" tilt="-90"/>
@@ -153,8 +153,8 @@
       <level height="512" predecode="1" preload="1" width="512"/>
       <preview color="0x808080" strip="1"/>
     </input>
-    <userdata altitude="0.00" author="" capturedatetime="2026-09-30T16:05:31" comment="" copyright="" customnodeid="" datetime="" description="" heading="286.387" hideinlist="0" info="" latitude="38.74881206" longitude="-9.20170872" nodeid="node9" source="" tags="R02" title="Panorama 08"/>
-    <view fovmode="2" pannorth="286.387">
+    <userdata altitude="0.00" author="" capturedatetime="2026-09-30T16:05:31" comment="" copyright="" customnodeid="" datetime="" description="" heading="106.387" hideinlist="0" info="" latitude="38.74876452" longitude="-9.20136019" nodeid="node9" source="" tags="R02" title="Panorama 08"/>
+    <view fovmode="2" pannorth="106.387">
       <start fov="100" pan="-55.9578" projection="4" tilt="-4.185"/>
       <flyin fov="170" pan="0" projection="9" tilt="-90"/>
       <min fov="1" pan="0" tilt="-90"/>
@@ -174,8 +174,8 @@
       <level height="512" predecode="1" preload="1" width="512"/>
       <preview color="0x808080" strip="1"/>
     </input>
-    <userdata altitude="0.00" author="" capturedatetime="2026-09-30T15:58:58" comment="" copyright="" customnodeid="" datetime="" description="" heading="284.725" hideinlist="0" info="" latitude="38.74887257" longitude="-9.20173112" nodeid="node11" source="" tags="R02" title="Panorama 09"/>
-    <view fovmode="2" pannorth="284.725">
+    <userdata altitude="0.00" author="" capturedatetime="2026-09-30T15:58:58" comment="" copyright="" customnodeid="" datetime="" description="" heading="104.725" hideinlist="0" info="" latitude="38.74870401" longitude="-9.20133779" nodeid="node11" source="" tags="R02" title="Panorama 09"/>
+    <view fovmode="2" pannorth="104.725">
       <start fov="100" pan="21.1469" projection="4" tilt="-3.66579"/>
       <flyin fov="170" pan="0" projection="9" tilt="-90"/>
       <min fov="1" pan="0" tilt="-90"/>
@@ -195,8 +195,8 @@
       <level height="512" predecode="1" preload="1" width="512"/>
       <preview color="0x808080" strip="1"/>
     </input>
-    <userdata altitude="0.00" author="" capturedatetime="2026-09-30T15:53:55" comment="" copyright="" customnodeid="" datetime="" description="" heading="120.928" hideinlist="0" info="" latitude="38.74885856" longitude="-9.20181759" nodeid="node14" source="" tags="R02" title="Panorama 10"/>
-    <view fovmode="2" pannorth="120.928">
+    <userdata altitude="0.00" author="" capturedatetime="2026-09-30T15:53:55" comment="" copyright="" customnodeid="" datetime="" description="" heading="300.928" hideinlist="0" info="" latitude="38.74871802" longitude="-9.20125132" nodeid="node14" source="" tags="R02" title="Panorama 10"/>
+    <view fovmode="2" pannorth="300.928">
       <start fov="136.926" pan="3.33152" projection="4" tilt="2.25735"/>
       <flyin fov="170" pan="0" projection="9" tilt="-90"/>
       <min fov="1" pan="0" tilt="-90"/>
@@ -217,8 +217,8 @@
       <level height="512" predecode="1" preload="1" width="512"/>
       <preview color="0x808080" strip="1"/>
     </input>
-    <userdata altitude="0.00" author="" capturedatetime="2026-09-30T15:30:44" comment="" copyright="" customnodeid="" datetime="" description="" heading="50.249" hideinlist="0" info="" latitude="38.74882947" longitude="-9.20181388" nodeid="node15" source="" tags="R02" title="Panorama 11"/>
-    <view fovmode="2" pannorth="50.249">
+    <userdata altitude="0.00" author="" capturedatetime="2026-09-30T15:30:44" comment="" copyright="" customnodeid="" datetime="" description="" heading="230.249" hideinlist="0" info="" latitude="38.74874711" longitude="-9.20125503" nodeid="node15" source="" tags="R02" title="Panorama 11"/>
+    <view fovmode="2" pannorth="230.249">
       <start fov="100" pan="-125.762" projection="4" tilt="0.62915"/>
       <flyin fov="170" pan="0" projection="9" tilt="-90"/>
       <min fov="1" pan="0" tilt="-90"/>
@@ -239,8 +239,8 @@
       <level height="512" predecode="1" preload="1" width="512"/>
       <preview color="0x808080" strip="1"/>
     </input>
-    <userdata altitude="0.00" author="" capturedatetime="2026-09-30T15:18:21" comment="" copyright="" customnodeid="" datetime="" description="" heading="44.768" hideinlist="0" info="" latitude="38.74881953" longitude="-9.20177432" nodeid="node16" source="" tags="R02" title="Panorama 12"/>
-    <view fovmode="2" pannorth="44.768">
+    <userdata altitude="0.00" author="" capturedatetime="2026-09-30T15:18:21" comment="" copyright="" customnodeid="" datetime="" description="" heading="224.768" hideinlist="0" info="" latitude="38.74875705" longitude="-9.20129459" nodeid="node16" source="" tags="R02" title="Panorama 12"/>
+    <view fovmode="2" pannorth="224.768">
       <start fov="100" pan="0.274613" projection="4" tilt="-5.76819"/>
       <flyin fov="170" pan="0" projection="9" tilt="-90"/>
       <min fov="1" pan="0" tilt="-90"/>
@@ -260,8 +260,8 @@
       <level height="512" predecode="1" preload="1" width="512"/>
       <preview color="0x808080" strip="1"/>
     </input>
-    <userdata altitude="0.00" author="" capturedatetime="2026-09-30T14:54:38" comment="" copyright="" customnodeid="" datetime="" description="" heading="289.394" hideinlist="0" info="" latitude="38.74883815" longitude="-9.20175790" nodeid="node17" source="" tags="R02" title="Panorama 13"/>
-    <view fovmode="2" pannorth="289.394">
+    <userdata altitude="0.00" author="" capturedatetime="2026-09-30T14:54:38" comment="" copyright="" customnodeid="" datetime="" description="" heading="109.394" hideinlist="0" info="" latitude="38.74873843" longitude="-9.20131101" nodeid="node17" source="" tags="R02" title="Panorama 13"/>
+    <view fovmode="2" pannorth="109.394">
       <start fov="100" pan="4.30255" projection="4" tilt="-3.23716"/>
       <flyin fov="170" pan="0" projection="9" tilt="-90"/>
       <min fov="1" pan="0" tilt="-90"/>
@@ -281,8 +281,8 @@
       <level height="512" predecode="1" preload="1" width="512"/>
       <preview color="0x808080" strip="1"/>
     </input>
-    <userdata altitude="0.00" author="" capturedatetime="2026-09-30T15:45:00" comment="" copyright="" customnodeid="" datetime="" description="" heading="301.627" hideinlist="0" info="" latitude="38.74884957" longitude="-9.20188184" nodeid="node12" source="" tags="R02" title="Panorama 14"/>
-    <view fovmode="2" pannorth="301.627">
+    <userdata altitude="0.00" author="" capturedatetime="2026-09-30T15:45:00" comment="" copyright="" customnodeid="" datetime="" description="" heading="121.627" hideinlist="0" info="" latitude="38.74872701" longitude="-9.20118707" nodeid="node12" source="" tags="R02" title="Panorama 14"/>
+    <view fovmode="2" pannorth="121.627">
       <start fov="100" pan="-101.18" projection="4" tilt="-26.5863"/>
       <flyin fov="170" pan="0" projection="9" tilt="-90"/>
       <min fov="1" pan="0" tilt="-90"/>
@@ -302,8 +302,8 @@
       <level height="512" predecode="1" preload="1" width="512"/>
       <preview color="0x808080" strip="1"/>
     </input>
-    <userdata altitude="0.00" author="" capturedatetime="2026-09-30T15:36:01" comment="" copyright="" customnodeid="" datetime="" description="" heading="7.503" hideinlist="0" info="" latitude="38.74887937" longitude="-9.20186373" nodeid="node13" source="" tags="R02" title="Panorama 15"/>
-    <view fovmode="2" pannorth="7.503">
+    <userdata altitude="0.00" author="" capturedatetime="2026-09-30T15:36:01" comment="" copyright="" customnodeid="" datetime="" description="" heading="187.503" hideinlist="0" info="" latitude="38.74869721" longitude="-9.20120518" nodeid="node13" source="" tags="R02" title="Panorama 15"/>
+    <view fovmode="2" pannorth="187.503">
       <start fov="100" pan="51.7756" projection="4" tilt="-34.5"/>
       <flyin fov="170" pan="0" projection="9" tilt="-90"/>
       <min fov="1" pan="0" tilt="-90"/>

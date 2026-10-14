@@ -1,110 +1,109 @@
 {
   "start": "node3",
-  "gpsRotation": 180,
   "nodes": [
     {
       "id": "node3",
       "title": "Panorama 01",
-      "lat": 38.74869721,
-      "lng": -9.20120518,
+      "lat": 38.74887937,
+      "lng": -9.20186373,
       "forwardPan": -3.72486
     },
     {
       "id": "node4",
       "title": "Panorama 02",
-      "lat": 38.74872382,
-      "lng": -9.2012888,
+      "lat": 38.74885276,
+      "lng": -9.20178011,
       "forwardPan": -1.31493
     },
     {
       "id": "node5",
       "title": "Panorama 03",
-      "lat": 38.74873891,
-      "lng": -9.20140854,
+      "lat": 38.74883767,
+      "lng": -9.20166037,
       "forwardPan": 1.14215
     },
     {
       "id": "node6",
       "title": "Panorama 04",
-      "lat": 38.7487665,
-      "lng": -9.20153344,
+      "lat": 38.74881008,
+      "lng": -9.20153547,
       "forwardPan": -18.8898
     },
     {
       "id": "node7",
       "title": "Panorama 05",
-      "lat": 38.74878482,
-      "lng": -9.20159429,
+      "lat": 38.74879176,
+      "lng": -9.20147462,
       "forwardPan": -28.7187
     },
     {
       "id": "node8",
       "title": "Panorama 06",
-      "lat": 38.74879857,
-      "lng": -9.20164341,
+      "lat": 38.74877801,
+      "lng": -9.2014255,
       "forwardPan": -12.5766
     },
     {
       "id": "node10",
       "title": "Panorama 07",
-      "lat": 38.74880417,
-      "lng": -9.20167409,
+      "lat": 38.74877241,
+      "lng": -9.20139482,
       "forwardPan": -23.4948
     },
     {
       "id": "node9",
       "title": "Panorama 08",
-      "lat": 38.74881206,
-      "lng": -9.20170872,
+      "lat": 38.74876452,
+      "lng": -9.20136019,
       "forwardPan": -55.9578
     },
     {
       "id": "node11",
       "title": "Panorama 09",
-      "lat": 38.74887257,
-      "lng": -9.20173112,
+      "lat": 38.74870401,
+      "lng": -9.20133779,
       "forwardPan": 21.1469
     },
     {
       "id": "node14",
       "title": "Panorama 10",
-      "lat": 38.74885856,
-      "lng": -9.20181759,
+      "lat": 38.74871802,
+      "lng": -9.20125132,
       "forwardPan": 3.33152
     },
     {
       "id": "node15",
       "title": "Panorama 11",
-      "lat": 38.74882947,
-      "lng": -9.20181388,
+      "lat": 38.74874711,
+      "lng": -9.20125503,
       "forwardPan": -125.762
     },
     {
       "id": "node16",
       "title": "Panorama 12",
-      "lat": 38.74881953,
-      "lng": -9.20177432,
+      "lat": 38.74875705,
+      "lng": -9.20129459,
       "forwardPan": 0.274613
     },
     {
       "id": "node17",
       "title": "Panorama 13",
-      "lat": 38.74883815,
-      "lng": -9.2017579,
+      "lat": 38.74873843,
+      "lng": -9.20131101,
       "forwardPan": 4.30255
     },
     {
       "id": "node12",
       "title": "Panorama 14",
-      "lat": 38.74884957,
-      "lng": -9.20188184,
+      "lat": 38.74872701,
+      "lng": -9.20118707,
       "forwardPan": -101.18
     },
     {
       "id": "node13",
       "title": "Panorama 15",
-      "lat": 38.74887937,
-      "lng": -9.20186373,
+      "lat": 38.74869721,
+      "lng": -9.20120518,
       "forwardPan": 51.7756
     }
   ]
