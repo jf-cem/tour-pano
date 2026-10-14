@@ -60,7 +60,7 @@ async function diagnostics() {
   const policy = document.permissionsPolicy || document.featurePolicy;
   let allowed = 'não verificável';
   try { allowed = policy ? (policy.allowsFeature('geolocation') ? 'permitida' : 'bloqueada') : allowed; } catch (_) {}
-  document.getElementById('diagnostics').textContent = `Versão: 7.7.9\nHTTPS: ${window.isSecureContext ? 'sim' : 'não'}\nAPI de localização: ${navigator.geolocation ? 'disponível' : 'indisponível'}\nPermissão reportada pelo navegador: ${permissionState}\nPolítica da página: ${allowed}\nPágina dentro de outra aplicação/frame: ${window.top !== window.self ? 'sim' : 'não'}\nÚltimo erro: ${lastError || 'nenhum'}\nNavegador: ${navigator.userAgent}`;
+  document.getElementById('diagnostics').textContent = `Versão: 7.7.10\nHTTPS: ${window.isSecureContext ? 'sim' : 'não'}\nAPI de localização: ${navigator.geolocation ? 'disponível' : 'indisponível'}\nPermissão reportada pelo navegador: ${permissionState}\nPolítica da página: ${allowed}\nPágina dentro de outra aplicação/frame: ${window.top !== window.self ? 'sim' : 'não'}\nÚltimo erro: ${lastError || 'nenhum'}\nNavegador: ${navigator.userAgent}`;
   document.getElementById('diagnostics').textContent+=`\nPreparação inicial: ${preparationSummary}`;
 }
 function stopTracking() {
@@ -342,7 +342,7 @@ document.getElementById('route').onclick = () => {
 window.addEventListener('pagehide',stopTracking);
 async function init() {
   try {
-    const response = await fetch('nodes.json?v=7.7.9');
+    const response = await fetch('nodes.json?v=7.7.10');
     if (!response.ok) throw new Error('Não foi possível carregar os pontos do tour.');
     data = await response.json();
     if(data.gpsRotation===180)data.nodes=TourGeo.rotateRoute180(data.nodes);

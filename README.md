@@ -135,3 +135,7 @@ Patch localizado no ficheiro gerado pano2vr_player.js, identificado por comentá
 ## Versão 7.7.9 — reversão da inversão do giroscópio
 
 Por pedido do utilizador, reposto byte a byte o player original anterior à v7.7.8 (41b417a:pano2vr_player.js). A inversão experimental do yaw e do recentramento foi retirada após reporte de comportamento incorreto no aparelho. Atualizados URLs de cache do iframe e do player. A calibração geográfica de 180° da v7.7.7 mantém-se; não foi aplicado nenhum novo offset de 90°. O alinhamento entre orientação física e conteúdo do panorama continua por diagnosticar. O teste gyro passa a verificar o comportamento original.
+
+## Versão 7.7.10 — ensaio de compensação de 90°
+
+Retoma o sentido horizontal do giroscópio da v7.7.8 e acrescenta +90 graus ao pan na primeira ativação do olhar, por pedido do utilizador após reporte de nascente/norte trocados. A compensação ocorre no evento gyrochanged, uma vez por carregamento; desativar/reativar não acumula offsets. O Pano2VR ancora o olhar na direção resultante. Não é uma bússola absoluta nem valida norte verdadeiro; confirmação em aparelho pendente. A calibração geográfica de 180° mantém-se. Cache atualizado no iframe, controlos e player. Testes executam o handler real e o código real dos controlos, incluindo eventos repetidos e toggles.
