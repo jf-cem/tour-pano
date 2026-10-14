@@ -16,8 +16,8 @@ function el(id){if(!nodes.has(id))nodes.set(id,{value:'',textContent:'',hidden:f
 let active=data.start,listener=()=>{},gpsSuccess,clock=100000,timerId=0;
 const timers=new Map();
 const frames=new Map();let pan=20,gyro=true;
-const records=[],viewTargets=[];
-const player={getNodeIds:()=>data.nodes.map(n=>n.id),getCurrentNode:()=>active,openNext(id,target){viewTargets.push(target);active=id.slice(1,-1);listener();},addListener(_,fn){listener=fn;}};
+const records=[];
+const player={getNodeIds:()=>data.nodes.map(n=>n.id),getCurrentNode:()=>active,openNext(id){active=id.slice(1,-1);listener();},addListener(_,fn){listener=fn;}};
 el('tour').contentWindow={pano:player};el('gps-mode').value='relative';el('align').checked=true;
 const context={console,TourGeo:geo,TourGpsStart:require('./gps-start.js'),document:{getElementById:el,createElement:()=>({}),querySelectorAll:()=>[],body:{dataset:{}}},navigator:{permissions:{query:async()=>({state:'granted'})},geolocation:{watchPosition(fn){gpsSuccess=fn;return 42;},clearWatch(){}}},fetch:async()=>({ok:true,json:async()=>data}),setInterval(fn){timers.set(++timerId,fn);return timerId;},clearInterval(id){timers.delete(id);},Date:class extends Date{static now(){return clock;}},window:{isSecureContext:true,addEventListener(){},TourControls:{init(){}},TourMap:{init(){},pause(){},reset(){records.length=0;},update(p){records.push(p);},setActive(){}}}};
 player.getPan=()=>pan;player.setPan=value=>{pan=value;};player.getUseGyro=()=>gyro;player.setUseGyro=value=>{gyro=value;};
@@ -115,8 +115,7 @@ const fromEnd=walk.createSimulation(data.nodes,14,100,1,0,'roundtrip');
 assert.equal(fromEnd.tick(1000000).id,data.nodes.at(-1).id);
 el('start-panorama').value=data.nodes[8].id;el('simulation-route').value='return';el('simulation-look').checked=false;el('route').onclick();
 assert.equal(pan,data.nodes[8].forwardPan+180);el('stop').onclick();
-assert.ok(viewTargets.length>0&&viewTargets.every(target=>target==='$fwd'),'all UI panorama changes preserve north-relative view');
-console.log('PASS: north-relative transitions, automatic +/-90 degree sweep, pause/resume, camera restoration, zero-pause opt-out; 15 relative starts, GPS straight walk through curves and return, accuracy rejection, simulation speeds/holds/pause/resume/end, cancellation and absolute GPS.');
+console.log('PASS: automatic +/-90 degree sweep, pause/resume, camera restoration, zero-pause opt-out; 15 relative starts, GPS straight walk through curves and return, accuracy rejection, simulation speeds/holds/pause/resume/end, cancellation and absolute GPS.');
 })().catch(e=>{console.error(e);process.exitCode=1;});
 
 

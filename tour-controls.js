@@ -1,12 +1,9 @@
 (function(){
   'use strict';
   const frame=document.getElementById('tour'),button=document.getElementById('motion-toggle'),message=document.getElementById('motion-message');
-  let player,noticeTimer,pending=false,layoutQueued=false,observer,headingAdjusted=false;
+  let player,noticeTimer,pending=false,layoutQueued=false,observer;
   function notice(text){message.textContent=text;message.hidden=false;clearTimeout(noticeTimer);noticeTimer=setTimeout(()=>message.hidden=true,7000);}
-  function sync(){if(!player)return;const enabled=player.getUseGyro();
-    // Experimental heading compensation; once per load, never accumulate on toggles.
-    if(enabled&&!headingAdjusted){headingAdjusted=true;player.setPan(player.getPan()-90);}
-    button.textContent='Olhar à volta';button.setAttribute('aria-pressed',String(enabled));button.setAttribute('aria-label',enabled?'Desativar o movimento do telemóvel':'Olhar à volta');button.title=enabled?'Desativar o movimento do telemóvel':'Mover o telemóvel para olhar à volta';}
+  function sync(){if(!player)return;const enabled=player.getUseGyro();button.textContent='Olhar à volta';button.setAttribute('aria-pressed',String(enabled));button.setAttribute('aria-label',enabled?'Desativar o movimento do telemóvel':'Olhar à volta');button.title=enabled?'Desativar o movimento do telemóvel':'Mover o telemóvel para olhar à volta';}
   button.onclick=async()=>{
     if(!player||pending)return;
     if(player.getUseGyro()){player.setUseGyro(false);sync();notice('Movimento desativado. Podes explorar a imagem com o dedo.');return;}

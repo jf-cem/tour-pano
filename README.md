@@ -126,28 +126,10 @@ Por pedido do utilizador, que reportou P15 no início físico, aplica-se uma mei
 
 Ativação reversível em nodes.json: gpsRotation = 180. Para repor o posicionamento original, usar 0 e atualizar os identificadores de cache. Esta é uma hipótese de calibração, não uma correspondência validada no terreno. Necessário confirmar P01/P15 e pontos intermédios com referências físicas. Os testes verificam troca dos extremos, seleção por proximidade, reversibilidade, preservação dos originais e regressões da caminhada.
 
-## Versão 7.7.8 — sentido horizontal do giroscópio
+## Restauro da 7.7.7 — 14 de outubro de 2026
 
-Após confirmação de que o número do panorama permanece igual mas a vista roda ao contrário, inverte-se apenas o yaw do handler DeviceOrientation do player Pano2VR 8.0/22523 incluído: cálculo horizontal e sinal do panOffset são corrigidos em conjunto. Inclinação e roll, navegação manual, imagens e GPS não são alterados. O ensaio geográfico de 180 graus da v7.7.7 permanece ativo e continua pendente de validação física.
+Por instrução do utilizador, reposto o comportamento do commit `41b417a`: rotação GPS de 180° mantida, player original, sem inversão horizontal e sem compensação inicial de ±90°. Também retiradas as mudanças de transição da 7.7.12, para retomar a investigação a partir desta base. O histórico Git conserva as tentativas posteriores. Os URLs de cache usam `7.7.7-restauro-20261014`; a versão funcional permanece 7.7.7.
 
-Patch localizado no ficheiro gerado pano2vr_player.js, identificado por comentário CeM no início. Ao reexportar no Pano2VR, reaplicar ou rever a correção; o teste falha se o handler esperado deixar de existir. test-gyro.cjs executa o handler real com matrizes de orientação controladas, verificando yaw, inclinação, passagem 0/360, recentramento e desativação. Isto não substitui o ensaio físico no telemóvel.
+Verificação: `node test-walk.cjs`, sintaxe do player e ensaio no Edge/Chromium com viewport 390 × 844, DPR 1, GPS e orientação simulados. No modo «Estou no local da visita», uma rotação horizontal de 90° para a direita produz a resposta esperada. As 14 mudanças GPS entre os 15 panoramas foram exercitadas; com orientação constante, P12→P13 muda o pan relativo ao norte +119,402° e P13→P14 −117,716°, porque se abre a vista inicial de cada panorama. O giroscópio ancora à vista aberta quando se ativa, em ambos os modos, sem alinhamento automático ao norte físico. Não foram aplicadas novas correções.
 
-## Versão 7.7.9 — reversão da inversão do giroscópio
-
-Por pedido do utilizador, reposto byte a byte o player original anterior à v7.7.8 (41b417a:pano2vr_player.js). A inversão experimental do yaw e do recentramento foi retirada após reporte de comportamento incorreto no aparelho. Atualizados URLs de cache do iframe e do player. A calibração geográfica de 180° da v7.7.7 mantém-se; não foi aplicado nenhum novo offset de 90°. O alinhamento entre orientação física e conteúdo do panorama continua por diagnosticar. O teste gyro passa a verificar o comportamento original.
-
-## Versão 7.7.10 — ensaio de compensação de 90°
-
-Retoma o sentido horizontal do giroscópio da v7.7.8 e acrescenta +90 graus ao pan na primeira ativação do olhar, por pedido do utilizador após reporte de nascente/norte trocados. A compensação ocorre no evento gyrochanged, uma vez por carregamento; desativar/reativar não acumula offsets. O Pano2VR ancora o olhar na direção resultante. Não é uma bússola absoluta nem valida norte verdadeiro; confirmação em aparelho pendente. A calibração geográfica de 180° mantém-se. Cache atualizado no iframe, controlos e player. Testes executam o handler real e o código real dos controlos, incluindo eventos repetidos e toggles.
-
-## Versão 7.7.11 — compensação de -90 graus
-
-Por pedido do utilizador, a compensação inicial do olhar passa de +90 para -90 graus. Mantêm-se o yaw invertido e a calibração GPS do ensaio anterior. Aplicação uma vez por carregamento, sem acumulação ao reativar. Testes técnicos passaram; correspondência física pendente.
-
-## Versão 7.7.12 — continuidade da orientação nas transições
-
-As mudanças de panorama feitas pela caminhada passam a usar $fwd em vez da vista inicial de cada imagem: preservam pan corrigido pelo norte, inclinação e FOV. No player incluído, depois de aplicar a vista de destino numa mudança de panorama, o gyro ativo recebe resetPanOffset, ancorando a leitura seguinte na direção do novo panorama em vez de recuperar o offset local da imagem anterior. Não muda o sentido do gyro nem a compensação -90 graus da v7.7.11; GPS permanece igual.
-
-Investigação dos 15 metadados: as vistas iniciais não têm a mesma direção geográfica. P12 inicia a 44,493 graus, P13 a 285,091 e P14 a 42,807, calculados de pannorth menos pan. Abrir na vista inicial podia portanto mudar o olhar cerca de 120 graus nessa zona. Pannorth varia porque cada imagem tem a sua origem angular; igualdade numérica de pannorth não seria uma calibração correta.
-
-Verificação no player real em Chromium, com sensores simulados: 28 mudanças entre os 15 panoramas, ida e regresso, com erro de pan relativo ao norte igual a zero antes/depois do evento de orientação. Capturas dos 15 panoramas com norte definido e inclinação 0 graus, na pasta local outputs/qa-orientacao. Também passaram test-walk.cjs e test-gyro.cjs. Os testes verificam continuidade matemática, não norte verdadeiro ou bússola física. A confirmação do conteúdo por pontos de referência reais continua pendente. Imagens/tiles e pano.xml preservados.
+Provas locais em `outputs/browser/pano-restauro-777/`, na raiz do espaço de trabalho: `RELATORIO.md`, `diagnostico.cjs`, `resultados.json` e capturas. O ensaio confirma lógica e aparência no browser desktop; o alinhamento dos panoramas com referências físicas e o comportamento dos sensores no Safari/iPhone continuam por verificar no aparelho.
