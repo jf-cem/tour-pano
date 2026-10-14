@@ -143,3 +143,11 @@ Retoma o sentido horizontal do giroscópio da v7.7.8 e acrescenta +90 graus ao p
 ## Versão 7.7.11 — compensação de -90 graus
 
 Por pedido do utilizador, a compensação inicial do olhar passa de +90 para -90 graus. Mantêm-se o yaw invertido e a calibração GPS do ensaio anterior. Aplicação uma vez por carregamento, sem acumulação ao reativar. Testes técnicos passaram; correspondência física pendente.
+
+## Versão 7.7.12 — continuidade da orientação nas transições
+
+As mudanças de panorama feitas pela caminhada passam a usar $fwd em vez da vista inicial de cada imagem: preservam pan corrigido pelo norte, inclinação e FOV. No player incluído, depois de aplicar a vista de destino numa mudança de panorama, o gyro ativo recebe resetPanOffset, ancorando a leitura seguinte na direção do novo panorama em vez de recuperar o offset local da imagem anterior. Não muda o sentido do gyro nem a compensação -90 graus da v7.7.11; GPS permanece igual.
+
+Investigação dos 15 metadados: as vistas iniciais não têm a mesma direção geográfica. P12 inicia a 44,493 graus, P13 a 285,091 e P14 a 42,807, calculados de pannorth menos pan. Abrir na vista inicial podia portanto mudar o olhar cerca de 120 graus nessa zona. Pannorth varia porque cada imagem tem a sua origem angular; igualdade numérica de pannorth não seria uma calibração correta.
+
+Verificação no player real em Chromium, com sensores simulados: 28 mudanças entre os 15 panoramas, ida e regresso, com erro de pan relativo ao norte igual a zero antes/depois do evento de orientação. Capturas dos 15 panoramas com norte definido e inclinação 0 graus, na pasta local outputs/qa-orientacao. Também passaram test-walk.cjs e test-gyro.cjs. Os testes verificam continuidade matemática, não norte verdadeiro ou bússola física. A confirmação do conteúdo por pontos de referência reais continua pendente. Imagens/tiles e pano.xml preservados.
