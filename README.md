@@ -125,3 +125,9 @@ O cabeçalho passa a identificar o valor como Progresso no percurso e mostra X /
 Por pedido do utilizador, que reportou P15 no início físico, aplica-se uma meia-volta às posições geográficas em torno do ponto médio das coordenadas originais de P01/P15. No runtime, P01 passa à coordenada antiga de P15 e P15 à antiga de P01. Todos os pontos intermédios também rodam; não é apenas uma inversão da lista. Mapa, GPS e progresso usam o mesmo conjunto transformado. Imagens, IDs, orientação da câmara e coordenadas originais em nodes.json/pano.xml são preservados. O modo remoto também recebe a geometria transformada.
 
 Ativação reversível em nodes.json: gpsRotation = 180. Para repor o posicionamento original, usar 0 e atualizar os identificadores de cache. Esta é uma hipótese de calibração, não uma correspondência validada no terreno. Necessário confirmar P01/P15 e pontos intermédios com referências físicas. Os testes verificam troca dos extremos, seleção por proximidade, reversibilidade, preservação dos originais e regressões da caminhada.
+
+## Versão 7.7.8 — sentido horizontal do giroscópio
+
+Após confirmação de que o número do panorama permanece igual mas a vista roda ao contrário, inverte-se apenas o yaw do handler DeviceOrientation do player Pano2VR 8.0/22523 incluído: cálculo horizontal e sinal do panOffset são corrigidos em conjunto. Inclinação e roll, navegação manual, imagens e GPS não são alterados. O ensaio geográfico de 180 graus da v7.7.7 permanece ativo e continua pendente de validação física.
+
+Patch localizado no ficheiro gerado pano2vr_player.js, identificado por comentário CeM no início. Ao reexportar no Pano2VR, reaplicar ou rever a correção; o teste falha se o handler esperado deixar de existir. test-gyro.cjs executa o handler real com matrizes de orientação controladas, verificando yaw, inclinação, passagem 0/360, recentramento e desativação. Isto não substitui o ensaio físico no telemóvel.
