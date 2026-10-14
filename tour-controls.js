@@ -5,7 +5,7 @@
   function notice(text){message.textContent=text;message.hidden=false;clearTimeout(noticeTimer);noticeTimer=setTimeout(()=>message.hidden=true,7000);}
   function sync(){if(!player)return;const enabled=player.getUseGyro();
     // Experimental heading compensation; once per load, never accumulate on toggles.
-    if(enabled&&!headingAdjusted){headingAdjusted=true;player.setPan(player.getPan()+90);}
+    if(enabled&&!headingAdjusted){headingAdjusted=true;player.setPan(player.getPan()-90);}
     button.textContent='Olhar à volta';button.setAttribute('aria-pressed',String(enabled));button.setAttribute('aria-label',enabled?'Desativar o movimento do telemóvel':'Olhar à volta');button.title=enabled?'Desativar o movimento do telemóvel':'Mover o telemóvel para olhar à volta';}
   button.onclick=async()=>{
     if(!player||pending)return;

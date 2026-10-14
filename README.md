@@ -139,3 +139,7 @@ Por pedido do utilizador, reposto byte a byte o player original anterior à v7.7
 ## Versão 7.7.10 — ensaio de compensação de 90°
 
 Retoma o sentido horizontal do giroscópio da v7.7.8 e acrescenta +90 graus ao pan na primeira ativação do olhar, por pedido do utilizador após reporte de nascente/norte trocados. A compensação ocorre no evento gyrochanged, uma vez por carregamento; desativar/reativar não acumula offsets. O Pano2VR ancora o olhar na direção resultante. Não é uma bússola absoluta nem valida norte verdadeiro; confirmação em aparelho pendente. A calibração geográfica de 180° mantém-se. Cache atualizado no iframe, controlos e player. Testes executam o handler real e o código real dos controlos, incluindo eventos repetidos e toggles.
+
+## Versão 7.7.11 — compensação de -90 graus
+
+Por pedido do utilizador, a compensação inicial do olhar passa de +90 para -90 graus. Mantêm-se o yaw invertido e a calibração GPS do ensaio anterior. Aplicação uma vez por carregamento, sem acumulação ao reativar. Testes técnicos passaram; correspondência física pendente.

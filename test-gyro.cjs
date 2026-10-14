@@ -33,7 +33,7 @@ const context={window:{addEventListener(){}},document:{getElementById:el},reques
 vm.createContext(context);vm.runInContext(fs.readFileSync('tour-controls.js','utf8'),context);
 context.window.TourControls.init({getUseGyro:()=>enabled,getPan:()=>heading,setPan:p=>heading=p,addListener:(name,fn)=>listeners[name]=fn});
 assert.equal(heading,15,'no correction with gyro disabled');
-enabled=true;listeners.gyrochanged();assert.equal(heading,105,'90 degree compensation on activation');
-listeners.gyrochanged();assert.equal(heading,105,'duplicate event does not accumulate correction');
-enabled=false;listeners.gyrochanged();enabled=true;listeners.gyrochanged();assert.equal(heading,105,'toggle does not accumulate correction');
+enabled=true;listeners.gyrochanged();assert.equal(heading,-75,'minus 90 degree compensation on activation');
+listeners.gyrochanged();assert.equal(heading,-75,'duplicate event does not accumulate correction');
+enabled=false;listeners.gyrochanged();enabled=true;listeners.gyrochanged();assert.equal(heading,-75,'toggle does not accumulate correction');
 console.log('PASS: real control heading offset applies once and preserves toggles');
