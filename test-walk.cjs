@@ -4,6 +4,13 @@ const fs=require('node:fs');
 const geo=require('./geo.js');
 const data=require('./nodes.json');
 const walk=require('./walk-playback.js');
+const originalCoordinates=JSON.stringify(data.nodes),rotated=geo.rotateRoute180(data.nodes);
+assert.ok(geo.distance(rotated[0],data.nodes.at(-1))<0.001);
+assert.ok(geo.distance(rotated.at(-1),data.nodes[0])<0.001);
+assert.equal(geo.nearest(data.nodes.at(-1),rotated).node.id,data.start,'physical old P15 selects P01 after half-turn');
+assert.equal(geo.nearest(data.nodes[0],rotated).node.id,data.nodes.at(-1).id);
+assert.equal(JSON.stringify(data.nodes),originalCoordinates,'source positions remain intact');
+geo.rotateRoute180(rotated).forEach((n,i)=>assert.ok(geo.distance(n,data.nodes[i])<0.001));
 const nodes=new Map();
 function el(id){if(!nodes.has(id))nodes.set(id,{value:'',textContent:'',hidden:false,disabled:false,dataset:{},append(){},replaceChildren(){},setAttribute(){}});return nodes.get(id);}
 let active=data.start,listener=()=>{},gpsSuccess,clock=100000,timerId=0;

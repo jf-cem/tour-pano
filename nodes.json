@@ -1,5 +1,6 @@
 {
   "start": "node3",
+  "gpsRotation": 180,
   "nodes": [
     {
       "id": "node3",

@@ -119,3 +119,9 @@ O cabeçalho mostra «Distância Percorrida:» e os metros na linha seguinte, co
 ## Versão 7.7.3 — progresso no percurso
 
 O cabeçalho passa a identificar o valor como Progresso no percurso e mostra X / 84 m (total calculado das coordenadas). O valor diminui no regresso, indicando posição no percurso, não distância acumulada.
+
+## Versão 7.7.7 — ensaio de rotação geográfica de 180°
+
+Por pedido do utilizador, que reportou P15 no início físico, aplica-se uma meia-volta às posições geográficas em torno do ponto médio das coordenadas originais de P01/P15. No runtime, P01 passa à coordenada antiga de P15 e P15 à antiga de P01. Todos os pontos intermédios também rodam; não é apenas uma inversão da lista. Mapa, GPS e progresso usam o mesmo conjunto transformado. Imagens, IDs, orientação da câmara e coordenadas originais em nodes.json/pano.xml são preservados. O modo remoto também recebe a geometria transformada.
+
+Ativação reversível em nodes.json: gpsRotation = 180. Para repor o posicionamento original, usar 0 e atualizar os identificadores de cache. Esta é uma hipótese de calibração, não uma correspondência validada no terreno. Necessário confirmar P01/P15 e pontos intermédios com referências físicas. Os testes verificam troca dos extremos, seleção por proximidade, reversibilidade, preservação dos originais e regressões da caminhada.

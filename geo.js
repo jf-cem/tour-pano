@@ -15,6 +15,13 @@
       return !best || meters < best.meters ? { node, meters } : best;
     }, null);
   }
+  // Experimental half-turn of geographic positions; keep source coordinates intact.
+  // Local latitude/longitude reflection is a 180-degree turn at this site's scale.
+  function rotateRoute180(nodes) {
+    const first=nodes[0],last=nodes[nodes.length-1];
+    const lat=(first.lat+last.lat)/2,lng=(first.lng+last.lng)/2;
+    return nodes.map(node=>({...node,lat:2*lat-node.lat,lng:2*lng-node.lng}));
+  }
   function createTracker(nodes, start) {
     let current = start, initialized = false, pending = null, count = 0;
     return function (position, accuracy = 0) {
@@ -65,7 +72,7 @@
     }
     return {...best,total:cumulative.at(-1),cumulative};
   }
-  const api = { distance, nearest, createTracker, bearing, destination, relativePosition, routePosition };
+  const api = { distance, nearest, createTracker, bearing, destination, relativePosition, routePosition, rotateRoute180 };
   if (typeof module !== 'undefined' && module.exports) module.exports = api;
   else root.TourGeo = api;
 })(typeof window === 'undefined' ? globalThis : window);
