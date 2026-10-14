@@ -131,3 +131,7 @@ Ativação reversível em nodes.json: gpsRotation = 180. Para repor o posicionam
 Após confirmação de que o número do panorama permanece igual mas a vista roda ao contrário, inverte-se apenas o yaw do handler DeviceOrientation do player Pano2VR 8.0/22523 incluído: cálculo horizontal e sinal do panOffset são corrigidos em conjunto. Inclinação e roll, navegação manual, imagens e GPS não são alterados. O ensaio geográfico de 180 graus da v7.7.7 permanece ativo e continua pendente de validação física.
 
 Patch localizado no ficheiro gerado pano2vr_player.js, identificado por comentário CeM no início. Ao reexportar no Pano2VR, reaplicar ou rever a correção; o teste falha se o handler esperado deixar de existir. test-gyro.cjs executa o handler real com matrizes de orientação controladas, verificando yaw, inclinação, passagem 0/360, recentramento e desativação. Isto não substitui o ensaio físico no telemóvel.
+
+## Versão 7.7.9 — reversão da inversão do giroscópio
+
+Por pedido do utilizador, reposto byte a byte o player original anterior à v7.7.8 (41b417a:pano2vr_player.js). A inversão experimental do yaw e do recentramento foi retirada após reporte de comportamento incorreto no aparelho. Atualizados URLs de cache do iframe e do player. A calibração geográfica de 180° da v7.7.7 mantém-se; não foi aplicado nenhum novo offset de 90°. O alinhamento entre orientação física e conteúdo do panorama continua por diagnosticar. O teste gyro passa a verificar o comportamento original.
